@@ -1,28 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import Footer from './components/footer';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import './App.css';
 
 function App() {
-  const [message, setMessage] = useState("Yükleniyor...");
-
-  useEffect(() => {
-    fetch('/api/Auth/register')
-      .then(response => response.json())
-      .then(data => {
-        console.log("Veri başarıyla alındı:", data);
-        setMessage(data.message || "Başarılı bir cevap alındı ama mesaj yok.");
-      })
-      .catch(error => {
-        console.error("API isteği sırasında hata oluştu:", error);
-        setMessage("API'ye bağlanırken bir hata oluştu.");
-      });
-  }, []);
-
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>VidSync Frontend</h1>
-        <p>Backend'den gelen mesaj: {message}</p>
-      </header>
+      {/* Header her zaman görünür */}
+      <Header />
+
+      <main style={{ padding: '2rem' }}>
+        {/* Routes, URL'ye göre hangi Route'un gösterileceğini belirler */}
+        <Routes>
+          {/* path="/" -> HomePage bileşenini göster */}
+          <Route path="/" element={<HomePage />} />
+          
+          {/* path="/login" -> LoginPage bileşenini göster */}
+          <Route path="/login" element={<LoginPage />} />
+          
+          {/* path="/register" -> RegisterPage bileşenini göster */}
+          <Route path="/register" element={<RegisterPage />} />
+        </Routes>
+      </main>
+
+      {/* Footer her zaman görünür */}
+      <Footer />
     </div>
   );
 }
