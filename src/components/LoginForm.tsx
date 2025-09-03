@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
-
-export interface LoginData {
-  email: string;
-  password: string;
-}
+import type { LoginData } from '../types/LoginData';
 
 export interface LoginFormProps {
   onSubmit: (data: LoginData) => void;

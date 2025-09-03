@@ -1,20 +1,11 @@
 import React, { useState } from 'react';
+import type { RegisterData } from '../types/RegisterData';
 
-export interface RegisterData {
-  firstName: string;
-  middleName: string;
-  lastName: string;
-  email: string;
-  password: string;
-}
-
-// 2. Bileşenin alacağı propları tanımlayan arayüz
 export interface RegisterFormProps {
   onSubmit: (data: RegisterData) => void;
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
-  // 3. Formun durumunu yönetmek için useState kancası
   const [formData, setFormData] = useState<RegisterData>({
     firstName: '',
     middleName: '',
@@ -23,7 +14,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
     password: '',
   });
 
-  // Input alanları değiştikçe state'i güncelleyen fonksiyon
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
@@ -32,7 +22,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
     }));
   };
 
-  // Form gönderildiğinde çalışacak fonksiyon
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     onSubmit(formData);
