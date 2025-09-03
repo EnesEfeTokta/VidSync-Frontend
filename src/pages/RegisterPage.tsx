@@ -1,7 +1,12 @@
 import React from "react";
+import RegisterForm from "../components/RegisterForm";
 
 const RegisterPage: React.FC = () => {
-  return <h2>Kayıt Ol</h2>;
+  return (
+    <div>
+      <RegisterForm onSubmit={(data) => console.log(data)} />
+    </div>
+  );
 };
 
 export default RegisterPage;
