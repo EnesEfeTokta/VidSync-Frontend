@@ -1,7 +1,12 @@
 import React from "react";
+import LoginForm from "../components/LoginForm";
 
 const LoginPage: React.FC = () => {
-  return <h2>Giriş Yap</h2>;
+  return (
+    <div>
+      <LoginForm onSubmit={(data) => console.log(data)} />
+    </div>
+  );
 };
 
 export default LoginPage;
