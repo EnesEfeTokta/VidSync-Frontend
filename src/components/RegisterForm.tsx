@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import type { RegisterData } from '../types/RegisterData';
+import { useAuth } from '../context/AuthContext';
 
-export interface RegisterFormProps {
-  onSubmit: (data: RegisterData) => void;
-}
-
-const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
+const RegisterForm: React.FC = () => {
+  const { register } = useAuth();
   const [formData, setFormData] = useState<RegisterData>({
     firstName: '',
     middleName: '',
@@ -13,6 +11,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
     email: '',
     password: '',
   });
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -22,14 +24,39 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSubmit(formData);
+
+    setError(null);
+    setIsLoading(true);
+
+    try
+    {
+      await register(formData);
+
+      alert('Successfully registered!');
+
+      setFormData({
+        firstName: '',
+        middleName: '',
+        lastName: '',
+        email: '',
+        password: ''
+      });
+    } catch (err)
+    {
+      console.error('Registration error:', err);
+      setError('Something went wrong!');
+    } finally
+    {
+      setIsLoading(false);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <h2>Kayıt Ol</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <div>
         <label htmlFor="firstName">Adı:</label>
         <input
@@ -39,6 +66,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
           value={formData.firstName}
           onChange={handleChange}
           required
+          disabled={isLoading}
         />
       </div>
       <div>
@@ -49,6 +77,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
           name="middleName"
           value={formData.middleName}
           onChange={handleChange}
+          disabled={isLoading}
         />
       </div>
       <div>
@@ -60,6 +89,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
           value={formData.lastName}
           onChange={handleChange}
           required
+          disabled={isLoading}
         />
       </div>
       <div>
@@ -71,6 +101,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
           value={formData.email}
           onChange={handleChange}
           required
+          disabled={isLoading}
         />
       </div>
       <div>
@@ -82,9 +113,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
           value={formData.password}
           onChange={handleChange}
           required
+          disabled={isLoading}
         />
       </div>
-      <button type="submit">Kayıt Ol</button>
+      <button type="submit" disabled={isLoading}>
+        {isLoading ? 'Recording...' : 'Register'}
+      </button>
     </form>
   );
 };
