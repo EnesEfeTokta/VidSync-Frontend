@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import type { LoginData } from '../types/LoginData';
 
-export interface LoginFormProps {
-  onSubmit: (data: LoginData) => void;
-}
+const LoginForm: React.FC = () => {
 
-const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
   const [formData, setFormData] = useState<LoginData>({
     email: '',
     password: '',
@@ -19,14 +24,29 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSubmit(formData);
+
+    setError(null);
+    setIsLoading(true);
+
+    try
+    {
+      await login(formData);
+      alert('Login successful!');
+      navigate('/');
+    } catch (err) {
+      console.error(err);
+      setError('Login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <h2>Giriş Yap</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <div>
         <label htmlFor="email">E-posta:</label>
         <input
@@ -50,6 +70,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
         />
       </div>
       <button type="submit">Giriş Yap</button>
+      {isLoading ? 'Loading...' : 'Login'}
     </form>
   );
 };
