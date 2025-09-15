@@ -5,6 +5,8 @@ import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import DashboardPage from './pages/DashboardPage';
+import ProtectedRoute from './router/ProtectedRoute';
 import './App.css';
 
 function App() {
@@ -24,6 +26,12 @@ function App() {
           
           {/* path="/register" -> RegisterPage bileşenini göster */}
           <Route path="/register" element={<RegisterPage />} />
+
+          {/* Sadece giriş yapmış kullanıcıların erişebileceği özel yollar */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+            {/* Diğer korunacak sayfalar (örn: /profile) buraya eklenebilir */}
+          </Route>
         </Routes>
       </main>
 
