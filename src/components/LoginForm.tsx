@@ -34,7 +34,7 @@ const LoginForm: React.FC = () => {
     {
       await login(formData);
       alert('Login successful!');
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       console.error(err);
       setError('Login failed. Please try again.');
