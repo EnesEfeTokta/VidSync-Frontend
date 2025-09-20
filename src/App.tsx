@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import ProtectedRoute from './router/ProtectedRoute';
+import RoomPage from './pages/RoomPage';
 import './App.css';
 
 function App() {
@@ -32,6 +33,9 @@ function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             {/* Diğer korunacak sayfalar (örn: /profile) buraya eklenebilir */}
           </Route>
+
+          {/* Dinamik parametre içeren rota */}
+          <Route path="/rooms/:roomId" element={<RoomPage />} />
         </Routes>
       </main>
 
