@@ -1,16 +1,36 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { roomService } from '../services/roomService';
 
 const DashboardPage: React.FC = () => {
+  const navigate = useNavigate();
+
   const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
 
   const [roomName, setRoomName] = useState<string>('');
   const [expiresDate, setExpiresDate] = useState<string>('');
 
-  const handleCreateRoomSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [isCreating, setIsCreating] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleCreateRoomSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    setIsCreating(true);
+    setError(null);
 
     console.log(`Creating new room: "${roomName}"`);
     console.log(`Room expiration date: "${expiresDate}"`);
+
+    try {
+      const newRoom = await roomService.createRoom({ name: roomName });
+      console.log("Room created successfully:", newRoom);
+    } catch (error) {
+      console.error("Error creating room:", error);
+      setError("Failed to create room");
+    } finally {
+      setIsCreating(false);
+    }
 
     setIsFormVisible(false);
     setRoomName('');
