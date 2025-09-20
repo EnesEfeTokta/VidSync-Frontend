@@ -6,7 +6,6 @@ const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
-
   const [roomName, setRoomName] = useState<string>('');
   const [expiresDate, setExpiresDate] = useState<string>('');
 
@@ -19,63 +18,66 @@ const DashboardPage: React.FC = () => {
     setIsCreating(true);
     setError(null);
 
-    console.log(`Creating new room: "${roomName}"`);
-    console.log(`Room expiration date: "${expiresDate}"`);
-
     try {
       const newRoom = await roomService.createRoom({ name: roomName });
-      alert(`Room "${newRoom.name}" created successfully!`);
+      alert(`The room "${newRoom.name}" has been successfully created!`);
+      
+      // Kullanıcıyı yeni oda sayfasına götürüyor..
       navigate(`/rooms/${newRoom.id}`);
-      console.log("Room created successfully:", newRoom);
-    } catch (error) {
-      console.error("Error creating room:", error);
-      setError("Failed to create room");
+
+    } catch (err) {
+      console.error("Error while creating room:", err);
+      setError("The room could not be created. Please try again.");
     } finally {
       setIsCreating(false);
     }
-
-    setIsFormVisible(false);
-    setRoomName('');
-    setExpiresDate('');
   };
+
+  const handleCancel = () => {
+      setIsFormVisible(false);
+      setRoomName('');
+      setExpiresDate('');
+      setError(null);
+  }
 
   return (
     <div>
-      <h1>Control Panel (Dashboard)</h1>
+      <h1>Kontrol Paneli (Dashboard)</h1>
       <p>Welcome! This is your personal space.</p>
       
       <hr />
 
-      {/* Eğer form görünür değilse, "Yeni Oda Oluştur" butonunu göster */}
       {!isFormVisible && (
         <button onClick={() => setIsFormVisible(true)}>
           Create New Room
         </button>
       )}
 
-      {/* 
-        Eğer isFormVisible true ise, oda oluşturma formunu göster.
-      */}
       {isFormVisible && (
         <form onSubmit={handleCreateRoomSubmit}>
           <h3>New Room Name</h3>
+          {/* Hata mesajını kullanıcıya göstereceğim. */}
+          {error && <p style={{ color: 'red' }}>{error}</p>}
           <input
             type="text"
             value={roomName}
             onChange={(e) => setRoomName(e.target.value)}
-            placeholder="Enter room name..."
+            placeholder="Enter the room name..."
             required
+            disabled={isCreating}
           />
           <input
             type="text"
             value={expiresDate}
             onChange={(e) => setExpiresDate(e.target.value)}
-            placeholder="Enter expiration date..."
+            placeholder="Expiration date (optional)..."
+            disabled={isCreating}
           />
-          <button type="submit">Create</button>
-          {/* It's a good practice to add a cancel button to close the form */}
-          <button type="button" onClick={() => setIsFormVisible(false)}>
-            Cancel
+          <button type="submit" disabled={isCreating}>
+            {isCreating ? 'Creating...' : 'Create'}
+          </button>
+          <button type="button" onClick={handleCancel} disabled={isCreating}>
+            İptal
           </button>
         </form>
       )}
