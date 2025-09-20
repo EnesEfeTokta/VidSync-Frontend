@@ -24,6 +24,8 @@ const DashboardPage: React.FC = () => {
 
     try {
       const newRoom = await roomService.createRoom({ name: roomName });
+      alert(`Room "${newRoom.name}" created successfully!`);
+      navigate(`/rooms/${newRoom.id}`);
       console.log("Room created successfully:", newRoom);
     } catch (error) {
       console.error("Error creating room:", error);
