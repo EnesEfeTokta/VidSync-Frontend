@@ -3,57 +3,72 @@ import { useParams } from 'react-router-dom';
 import { signalrService } from '../services/signalrService';
 import { useAuth } from '../context/AuthContext';
 
+interface Participant {
+  id: string;
+  firstName: string;
+}
+
 const RoomPage: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const { user } = useAuth();
+  const [participants, setParticipants] = useState<Participant[]>([]);
 
-  const [participants, setParticipants] = useState<string[]>(user ? [user.firstName] : []); 
+  useEffect(() => {
+    return () => {
+      signalrService.disconnect();
+    };
+  }, []);
 
-useEffect(() => {
-    if (!roomId) return;
+  useEffect(() => {
+    if (!roomId || !user) {
+      return;
+    }
 
     const setupSignalR = async () => {
-      await signalrService.connect();
-      signalrService.invoke('JoinRoom', roomId);
+      try {
+        await signalrService.connect();
 
-      // Başka bir kullanıcı katıldığında...
-      signalrService.on('UserJoined', (joinedUserId: string) => {
-        console.log(`Yeni kullanıcı katıldı: ${joinedUserId}`);
-        setParticipants(prev => [...new Set([...prev, joinedUserId])]);
-      });
+        signalrService.on('UpdateParticipantList', (participantList: Participant[]) => {
+          console.log("Participant list updated:", participantList);
+          setParticipants(participantList);
+        });
 
-      // Bir kullanıcı ayrıldığında...
-      signalrService.on('UserLeft', (leftUserId: string) => {
-        console.log(`Kullanıcı ayrıldı: ${leftUserId}`);
-        setParticipants(prev => prev.filter(p => p !== leftUserId));
-      });
+        signalrService.invoke('JoinRoom', roomId);
+
+      } catch (error) {
+        console.error("SignalR connection error:", error);
+      }
     };
 
     setupSignalR();
 
-    // Bileşen ekrandan kaldırıldığında bağlantıyı temizle
-    return () => {
-      signalrService.disconnect();
-    };
-  }, [roomId]); // Bu effect sadece bir kez (veya roomId değişirse) çalışır.
+  }, [roomId, user]);
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    alert('Room invitation link copied to clipboard!');
+  };
 
   return (
     <div>
-      <h1>Oda Sayfası</h1>
-      <p>Oda ID: <strong>{roomId}</strong></p>
+      <h1>Room Page</h1>
+      <p>Room ID: <strong>{roomId}</strong></p>
+      
+      <button onClick={handleCopyLink} style={{ margin: '1rem 0' }}>
+        Copy Invite Link
+      </button>
       
       <hr />
 
-      <h2>Katılımcılar</h2>
+      <h2>Participants ({participants.length})</h2>
       {participants.length > 0 ? (
         <ul>
-          {/* Listede artık kendi adınız da görünecek */}
-          {participants.map(participantId => (
-            <li key={participantId}>{participantId}</li>
+          {participants.map(participant => (
+            <li key={participant.id}>{participant.firstName}</li>
           ))}
         </ul>
       ) : (
-        <p>Katılımcılar yükleniyor...</p>
+        <p>You are the first one here. Share the link to invite others!</p>
       )}
     </div>
   );

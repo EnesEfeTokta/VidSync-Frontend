@@ -3,14 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import type { LoginData } from '../types/LoginData';
 
-const LoginForm: React.FC = () => {
+interface LoginFormProps {
+  redirectTo: string;
+}
 
+const LoginForm: React.FC<LoginFormProps> = ({ redirectTo }) => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-
   const [formData, setFormData] = useState<LoginData>({
     email: '',
     password: '',
@@ -26,15 +28,13 @@ const LoginForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     setError(null);
     setIsLoading(true);
 
-    try
-    {
+    try {
       await login(formData);
       alert('Login successful!');
-      navigate('/dashboard');
+      navigate(redirectTo, { replace: true });
     } catch (err) {
       console.error(err);
       setError('Login failed. Please try again.');
@@ -48,7 +48,7 @@ const LoginForm: React.FC = () => {
       <h2>Giriş Yap</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <div>
-        <label htmlFor="email">E-posta:</label>
+        <label htmlFor="email">Email:</label>
         <input
           type="email"
           id="email"
@@ -59,7 +59,7 @@ const LoginForm: React.FC = () => {
         />
       </div>
       <div>
-        <label htmlFor="password">Şifre:</label>
+        <label htmlFor="password">Password:</label>
         <input
           type="password"
           id="password"
@@ -69,7 +69,7 @@ const LoginForm: React.FC = () => {
           required
         />
       </div>
-      <button type="submit">Giriş Yap</button>
+      <button type="submit">Login</button>
       {isLoading ? 'Loading...' : 'Login'}
     </form>
   );
