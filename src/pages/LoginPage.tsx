@@ -1,10 +1,15 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 import LoginForm from "../components/LoginForm";
 
 const LoginPage: React.FC = () => {
+  const location = useLocation();
+
+  const redirectTo = location.state?.from?.pathname || "/dashboard";
+
   return (
     <div>
-      <LoginForm onSubmit={(data) => console.log(data)} />
+      <LoginForm redirectTo={redirectTo} />
     </div>
   );
 };

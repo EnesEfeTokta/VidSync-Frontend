@@ -1,20 +1,13 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import type { ReactNode } from 'react';
+import axios from 'axios';
 import type { User } from '../types/User';
 import type { LoginData } from '../types/LoginData';
 import type { RegisterData } from '../types/RegisterData';
 import { authService } from '../services/authService';
+import type { AuthContextType } from '../types/AuthContextType';
 
-export interface AuthContextType {
-  user: User | null;
-  token: string | null;
-  login: (data: LoginData) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
-  logout: () => void;
-  isAuthenticated: boolean;
-}
-
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -23,13 +16,31 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('authToken');
-    if (storedToken) {
-      setToken(storedToken);
-      // setUser(...) // Token'dan kullanıcı bilgisi çözümlenip veya API'den alınıp set edilebilir.
-    }
+    const initializeAuth = async () => {
+      const storedToken = localStorage.getItem('authToken');
+      if (storedToken) {
+        try {
+          setToken(storedToken);
+          axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+
+          const userData = await authService.me();
+          setUser(userData);
+
+        } catch (error) {
+          console.error("Failed to restore session, token might be invalid:", error);
+          localStorage.removeItem('authToken');
+          setToken(null);
+          setUser(null);
+          delete axios.defaults.headers.common['Authorization'];
+        }
+      }
+      setIsLoading(false);
+    };
+
+    initializeAuth();
   }, []);
 
   const login = async (data: LoginData) => {
@@ -38,6 +49,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(response.user);
       setToken(response.token);
       localStorage.setItem('authToken', response.token);
+
+      axios.defaults.headers.common['Authorization'] = `Bearer ${response.token}`;
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
@@ -50,6 +63,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(response.user);
       setToken(response.token);
       localStorage.setItem('authToken', response.token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${response.token}`;
     } catch (error) {
       console.error('Registration failed:', error);
       throw error;
@@ -60,6 +74,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
     setToken(null);
     localStorage.removeItem('authToken');
+    delete axios.defaults.headers.common['Authorization'];
   };
   
   const value: AuthContextType = {
@@ -69,7 +84,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     register,
     logout,
     isAuthenticated: !!token,
+    isLoading,
   };
+
+  if (isLoading) {
+    return <div>Loading session...</div>;
+  }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
