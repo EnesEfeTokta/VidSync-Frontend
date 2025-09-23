@@ -2,6 +2,7 @@ import axios from "axios";
 import type { AuthResponse } from "../types/AuthResponse";
 import type { LoginData } from "../types/LoginData";
 import type { RegisterData } from "../types/RegisterData";
+import type { User } from "../types/User";
 
 const API_URL = "http://localhost:5166/api/auth";
 
@@ -15,7 +16,13 @@ const register = async (data: RegisterData): Promise<AuthResponse> => {
   return response.data;
 };
 
+const me = async (): Promise<User> => {
+  const response = await axios.get<User>(`${API_URL}/me`);
+  return response.data;
+};
+
 export const authService = {
   login,
   register,
+  me,
 };
