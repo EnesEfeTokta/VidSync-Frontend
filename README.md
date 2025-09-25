@@ -1,3 +1,70 @@
+# VidSync-Frontend
+
+> A frontend application developed with React, TypeScript, and Vite, offering real-time video synchronization and chat features.
+
+## About the Project
+
+VidSync is a platform where users can watch videos together and chat simultaneously. It includes features such as real-time communication with SignalR, user management, room creation, and secure login/signup.
+
+## Main Features
+
+- User registration and login
+- Room creation and management
+- Real-time video synchronization (SignalR)
+- Chat
+- Protected routes
+- Modern and responsive UI
+
+## Installation
+
+```bash
+git clone https://github.com/EnesEfeTokta/VidSync-Frontend.git
+cd VidSync-Frontend
+npm install
+```
+
+## Getting Started
+
+```bash
+npm run dev
+```
+
+By default, the application runs at `http://localhost:5173`.
+
+## Folder Structure
+
+```text
+src/
+  api/                # API requests
+  assets/             # Static files
+  components/         # Common components
+  context/            # React context files
+  features/           # Feature-based modules
+    auth/             # Authentication
+    room/             # Room management
+  hooks/              # Custom React hooks
+  pages/              # Page components
+  router/             # Routing and protected routes
+  services/           # Services (auth, room, signalr)
+  types/              # TypeScript types
+  utils/              # Utility functions
+```
+
+## Technologies Used
+
+- React
+- TypeScript
+- Vite
+- SignalR
+- ESLint
+
+## Contributing
+
+To contribute, please create a pull request or open an issue.
+
+## License
+
+MIT
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

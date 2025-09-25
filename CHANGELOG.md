@@ -17,3 +17,21 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Fixed input focus issue in forms.
+
+## [Sprint 2] - 2025-09
+
+### Eklenenler
+- Oda oluşturma eklendi.
+- Gerçek zamanlı iletişim için SignalR entegre edildi.
+- Odalarda kullanıcı varlığı izleme özelliği uygulandı.
+- Katılımcı listesi görüntüleme özelliği eklendi.
+- API ve SignalR URL'leri için ortam değişkenleri ayarlandı.
+- API istekleri ve SignalR bağlantıları için hata işleme eklendi.
+- Kullanıcı katılma/ayrılma bildirimleri uygulandı.
+
+### Değiştirilenler
+- API hizmeti, interceptor'larla Axios örneğini kullanacak şekilde yeniden düzenlendi.
+
+### Düzeltilenler
+- SignalR bağlantı kesintileriyle ilgili sorunlar çözüldü.
+- Katılımcı listesi güncellemelerindeki hatalar düzeltildi.
