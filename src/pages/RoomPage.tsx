@@ -28,15 +28,26 @@ const RoomPage: React.FC = () => {
       try {
         await signalrService.connect();
 
-        signalrService.on('UpdateParticipantList', (participantList: Participant[]) => {
-          console.log("Participant list updated:", participantList);
-          setParticipants(participantList);
+        signalrService.on('ExistingParticipants', (existingUsers: Participant[]) => {
+          const currentUser = { id: user.id, firstName: user.firstName };
+          setParticipants([currentUser, ...existingUsers]);
         });
 
+        signalrService.on('UserJoined', (joinedUser: Participant) => {
+          setParticipants(prev => {
+            if (prev.find(p => p.id === joinedUser.id)) return prev;
+            return [...prev, joinedUser];
+          });
+        });
+
+        signalrService.on('UserLeft', (leftUserId: string) => {
+          setParticipants(prev => prev.filter(p => p.id !== leftUserId));
+        });
+        
         signalrService.invoke('JoinRoom', roomId);
 
       } catch (error) {
-        console.error("SignalR connection error:", error);
+        console.error("SignalR error:", error);
       }
     };
 
