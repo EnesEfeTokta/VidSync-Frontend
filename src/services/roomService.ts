@@ -2,7 +2,7 @@ import axios  from "axios";
 import type { CreateRoomPayload } from "../types/CreateRoomPayload";
 import type { Room } from "../types/Room";
 
-const API_URL = "http://localhost:5166/api";
+const API_URL = `${import.meta.env.VITE_API_URL}/api`;
 
 const createRoom = async (payload: CreateRoomPayload): Promise<Room> => {
     const toeken = localStorage.getItem("authToken");

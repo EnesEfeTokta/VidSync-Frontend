@@ -1,6 +1,6 @@
 import * as signalR from "@microsoft/signalr";
 
-const HUB_URL = "http://localhost:5166/communicationhub";
+const HUB_URL = "${import.meta.env.VITE_API_URL}/communicationhub";
 
 let connection: signalR.HubConnection | null = null;
 
