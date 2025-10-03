@@ -1,8 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
+import basicSsl from '@vitejs/plugin-basic-ssl'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: 
+  [
+    react(),
+    basicSsl()
+  ],
   server: {
     proxy: {
       '/api': {
@@ -16,6 +21,7 @@ export default defineConfig({
         secure: false,
         ws: true,
       }
-    }
+    },
+    https: true,
   }
 })

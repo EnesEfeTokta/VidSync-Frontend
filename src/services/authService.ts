@@ -4,7 +4,7 @@ import type { LoginData } from "../types/LoginData";
 import type { RegisterData } from "../types/RegisterData";
 import type { User } from "../types/User";
 
-const API_URL = "http://localhost:5166/api/auth";
+const API_URL = `${import.meta.env.VITE_API_URL}/api/auth`;
 
 const login = async (data: LoginData): Promise<AuthResponse> => {
   const response = await axios.post(`${API_URL}/login`, data);
