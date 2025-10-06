@@ -1,27 +1,16 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-import basicSsl from '@vitejs/plugin-basic-ssl'
+import fs from 'fs'
 
 export default defineConfig({
-  plugins: 
-  [
-    react(),
-    basicSsl()
+  plugins: [
+    react()
   ],
   server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:5166',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/hub': {
-        target: 'http://localhost:5166',
-        changeOrigin: true,
-        secure: false,
-        ws: true,
-      }
-    },
-    https: true,
+    host: '0.0.0.0', 
+    https: {
+      key: fs.readFileSync('./localhost+3-key.pem'),
+      cert: fs.readFileSync('./localhost+3.pem'),
+    }
   }
 })
