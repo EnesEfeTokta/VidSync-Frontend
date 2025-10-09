@@ -20,22 +20,21 @@ const RoomPage: React.FC = () => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
+  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+
   const handleHangUp = useCallback(() => {
     console.log("Hanging up call...");
-
-    if (remoteVideoRef.current) {
-      remoteVideoRef.current.srcObject = null;
-    }
-    if (localVideoRef.current && localVideoRef.current.srcObject) {
-      const stream = localVideoRef.current.srcObject as MediaStream;
-      stream.getTracks().forEach(track => track.stop());
-      localVideoRef.current.srcObject = null;
-    }
-    
     webRtcService.closeConnection();
-    
+
+    if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
+    if (localVideoRef.current) localVideoRef.current.srcObject = null;
+
     setIsCallActive(false);
     peerUserIdRef.current = null;
+
+    setIsAudioEnabled(true);
+    setIsVideoEnabled(true);
   }, []);
 
   const setupWebRTCConnection = async (targetUserId: string, isInitiator: boolean) => {
@@ -54,6 +53,9 @@ const RoomPage: React.FC = () => {
       
       setIsCallActive(true);
       peerUserIdRef.current = targetUserId;
+
+      setIsAudioEnabled(true);
+      setIsVideoEnabled(true);
 
       const handleRemoteStream = (stream: MediaStream) => {
         if (remoteVideoRef.current && remoteVideoRef.current.srcObject !== stream) {
@@ -143,6 +145,18 @@ const RoomPage: React.FC = () => {
     await setupWebRTCConnection(targetUserId, true);
   };
 
+  const handleToggleAudio = () => {
+    const newAudioState = !isAudioEnabled;
+    webRtcService.toggleAudio(newAudioState);
+    setIsAudioEnabled(newAudioState);
+  };
+
+  const handleToggleVideo = () => {
+    const newVideoState = !isVideoEnabled;
+    webRtcService.toggleVideo(newVideoState);
+    setIsVideoEnabled(newVideoState);
+  }
+
   return (
     <div>
       <h1>Oda: {roomId}</h1>
@@ -179,6 +193,21 @@ const RoomPage: React.FC = () => {
         {isCallActive && (
           <button onClick={handleHangUp} style={{ marginTop: '10px' }}>Aramayı Sonlandır</button>
         )}
+
+        {isCallActive && (
+          <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
+            <button onClick={handleToggleAudio}>
+              {isAudioEnabled ? 'Sesi Kapat' : 'Sesi Aç'}
+            </button>
+            <button onClick={handleToggleVideo}>
+              {isVideoEnabled ? 'Kamerayı Kapat' : 'Kamerayı Aç'}
+            </button>
+            <button onClick={handleHangUp} style={{ backgroundColor: 'red' }}>
+              Aramayı Sonlandır
+            </button>
+          </div>
+        )}
+
       </div>
     </div>
   );
