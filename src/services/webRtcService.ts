@@ -15,71 +15,24 @@ const ICE_SERVERS = {
       username: 'openrelayproject',
       credential: 'openrelayproject',
     },
-    {
-      urls: 'turn:openrelay.metered.ca:443',
-      username: 'openrelayproject',
-      credential: 'openrelayproject',
-    },
   ],
 };
 
 const serializeSdp = (description: RTCSessionDescriptionInit): string => {
-  return JSON.stringify({
-    type: description.type,
-    sdp: description.sdp,
-  });
+  return JSON.stringify({ type: description.type, sdp: description.sdp });
 };
 
 const deserializeSdp = (sdpString: string): RTCSessionDescriptionInit => {
-  if (!sdpString || typeof sdpString !== 'string') {
-    throw new Error('Invalid SDP string: ' + sdpString);
-  }
-  try {
-    const parsed = JSON.parse(sdpString);
-    if (!parsed.type || !['offer', 'answer', 'pranswer', 'rollback'].includes(parsed.type)) {
-      throw new Error(`Invalid SDP type: ${parsed.type}`);
-    }
-    if (!parsed.sdp) {
-      throw new Error('SDP content is missing');
-    }
-    return {
-      type: parsed.type as RTCSdpType,
-      sdp: parsed.sdp,
-    };
-  } catch (error) {
-    console.error("Error deserializing SDP:", error);
-    throw error;
-  }
+  const parsed = JSON.parse(sdpString);
+  return { type: parsed.type as RTCSdpType, sdp: parsed.sdp };
 };
 
 const serializeIceCandidate = (candidate: RTCIceCandidate): string => {
-  return JSON.stringify({
-    candidate: candidate.candidate,
-    sdpMid: candidate.sdpMid,
-    sdpMLineIndex: candidate.sdpMLineIndex,
-    usernameFragment: candidate.usernameFragment,
-  });
+  return JSON.stringify(candidate.toJSON());
 };
 
 const deserializeIceCandidate = (candidateString: string): RTCIceCandidateInit => {
-  if (!candidateString || typeof candidateString !== 'string') {
-    throw new Error('Invalid ICE candidate string: ' + candidateString);
-  }
-  try {
-    const parsed = JSON.parse(candidateString);
-    if (!parsed.candidate) {
-      throw new Error('ICE candidate content is missing');
-    }
-    return {
-      candidate: parsed.candidate,
-      sdpMid: parsed.sdpMid,
-      sdpMLineIndex: parsed.sdpMLineIndex,
-      usernameFragment: parsed.usernameFragment,
-    };
-  } catch (error) {
-    console.error("Error deserializing ICE candidate:", error);
-    throw error;
-  }
+  return JSON.parse(candidateString);
 };
 
 const startLocalStream = async (): Promise<MediaStream> => {
@@ -87,11 +40,7 @@ const startLocalStream = async (): Promise<MediaStream> => {
     if (localStream && localStream.active) {
       return localStream;
     }
-
-    localStream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
-    });
+    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
     return localStream;
   } catch (error) {
     console.error("Error accessing media devices:", error);
@@ -108,10 +57,9 @@ const startLocalStream = async (): Promise<MediaStream> => {
 
 const createPeerConnection = (onStreamReceived: (stream: MediaStream) => void, targetUserId: string) => {
   if (!targetUserId) {
-    console.error("Target user ID is undefined");
+    console.error("Target user ID is undefined for peer connection.");
     return;
   }
-
   if (peerConnection) {
     closeConnection();
   }
@@ -121,9 +69,11 @@ const createPeerConnection = (onStreamReceived: (stream: MediaStream) => void, t
   onRemoteStreamCallback = onStreamReceived;
 
   peerConnection.ontrack = (event) => {
-    remoteStream!.addTrack(event.track);
+    event.streams[0].getTracks().forEach(track => {
+      remoteStream!.addTrack(track);
+    });
     if (onRemoteStreamCallback) {
-        onRemoteStreamCallback(remoteStream);
+      onRemoteStreamCallback(remoteStream);
     }
   };
 
@@ -137,37 +87,23 @@ const createPeerConnection = (onStreamReceived: (stream: MediaStream) => void, t
   };
 
   peerConnection.onconnectionstatechange = () => {
-    console.log("Connection state:", peerConnection?.connectionState);
+    console.log("Connection state changed:", peerConnection?.connectionState);
     if (peerConnection?.connectionState === 'failed') {
       peerConnection?.restartIce();
     }
-  };
-
-  peerConnection.oniceconnectionstatechange = () => {
-    console.log("ICE connection state:", peerConnection?.iceConnectionState);
   };
 
   if (localStream) {
     localStream.getTracks().forEach(track => {
       peerConnection!.addTrack(track, localStream!);
     });
-  } else {
-    console.warn("No local stream available when creating peer connection");
   }
 };
 
 const createOffer = async (targetUserId: string) => {
-  if (!peerConnection) {
-    return;
-  }
-  if (!targetUserId) {
-    return;
-  }
+  if (!peerConnection || !targetUserId) return;
   try {
-    const offer = await peerConnection.createOffer({
-      offerToReceiveAudio: true,
-      offerToReceiveVideo: true,
-    });
+    const offer = await peerConnection.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
     await peerConnection.setLocalDescription(offer);
     const serializedOffer = serializeSdp(offer);
     await signalrService.invoke('SendOffer', targetUserId, serializedOffer);
@@ -177,12 +113,7 @@ const createOffer = async (targetUserId: string) => {
 };
 
 const handleReceivedOffer = async (callerId: string, serializedOffer: string) => {
-  if (!peerConnection) {
-    return;
-  }
-  if (!callerId || !serializedOffer) {
-    return;
-  }
+  if (!peerConnection || !callerId || !serializedOffer) return;
   try {
     const offer = deserializeSdp(serializedOffer);
     await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
@@ -197,12 +128,7 @@ const handleReceivedOffer = async (callerId: string, serializedOffer: string) =>
 };
 
 const handleReceivedAnswer = async (serializedAnswer: string) => {
-  if (!peerConnection) {
-    return;
-  }
-  if (!serializedAnswer) {
-    return;
-  }
+  if (!peerConnection || !serializedAnswer) return;
   try {
     const answer = deserializeSdp(serializedAnswer);
     await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
@@ -217,7 +143,6 @@ const handleReceivedIceCandidate = async (candidateString: string) => {
     iceCandidateQueue.push(deserializeIceCandidate(candidateString));
     return;
   }
-
   try {
     const candidate = deserializeIceCandidate(candidateString);
     await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
@@ -227,10 +152,7 @@ const handleReceivedIceCandidate = async (candidateString: string) => {
 };
 
 const processIceCandidateQueue = async () => {
-  if (!peerConnection || !peerConnection.remoteDescription) {
-    return;
-  }
-
+  if (!peerConnection || !peerConnection.remoteDescription) return;
   while (iceCandidateQueue.length > 0) {
     const candidate = iceCandidateQueue.shift()!;
     try {
@@ -241,13 +163,22 @@ const processIceCandidateQueue = async () => {
   }
 };
 
+const cleanupSignaling = () => {
+  signalrService.off('ReceiveOffer');
+  signalrService.off('ReceiveAnswer');
+  signalrService.off('ReceiveIceCandidate');
+  console.log("WebRTC signaling listeners removed.");
+};
+
 const initializeSignaling = (createPeerConnectionForOffer: (callerId: string) => Promise<void>) => {
+  cleanupSignaling();
   signalrService.on('ReceiveOffer', async (callerId: string, serializedOffer: string) => {
     await createPeerConnectionForOffer(callerId);
     await handleReceivedOffer(callerId, serializedOffer);
   });
   signalrService.on('ReceiveAnswer', handleReceivedAnswer);
   signalrService.on('ReceiveIceCandidate', handleReceivedIceCandidate);
+  console.log("WebRTC signaling listeners initialized.");
 };
 
 const closeConnection = () => {
@@ -255,43 +186,31 @@ const closeConnection = () => {
     peerConnection.ontrack = null;
     peerConnection.onicecandidate = null;
     peerConnection.onconnectionstatechange = null;
-    peerConnection.oniceconnectionstatechange = null;
-
-    peerConnection.getTransceivers().forEach(transceiver => {
-      transceiver.stop();
-    });
-
+    peerConnection.getTransceivers().forEach(transceiver => transceiver.stop());
     peerConnection.close();
     peerConnection = null;
   }
-
   if (localStream) {
     localStream.getTracks().forEach(track => track.stop());
     localStream = null;
   }
-
   if (remoteStream) {
     remoteStream.getTracks().forEach(track => track.stop());
     remoteStream = null;
   }
-  
   onRemoteStreamCallback = null;
   iceCandidateQueue.length = 0;
 };
 
 const toggleAudio = (enabled: boolean) => {
   if (localStream) {
-    localStream.getAudioTracks().forEach(track => {
-      track.enabled = enabled;
-    });
+    localStream.getAudioTracks().forEach(track => { track.enabled = enabled; });
   }
 };
 
 const toggleVideo = (enabled: boolean) => {
   if (localStream) {
-    localStream.getVideoTracks().forEach(track => {
-      track.enabled = enabled;
-    });
+    localStream.getVideoTracks().forEach(track => { track.enabled = enabled; });
   }
 };
 
@@ -299,10 +218,8 @@ export const webRtcService = {
   startLocalStream,
   createPeerConnection,
   createOffer,
-  handleReceivedOffer,
-  handleReceivedAnswer,
-  handleReceivedIceCandidate,
   initializeSignaling,
+  cleanupSignaling,
   closeConnection,
   toggleAudio,
   toggleVideo,
