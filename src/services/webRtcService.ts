@@ -279,6 +279,22 @@ const closeConnection = () => {
   iceCandidateQueue.length = 0;
 };
 
+const toggleAudio = (enabled: boolean) => {
+  if (localStream) {
+    localStream.getAudioTracks().forEach(track => {
+      track.enabled = enabled;
+    });
+  }
+};
+
+const toggleVideo = (enabled: boolean) => {
+  if (localStream) {
+    localStream.getVideoTracks().forEach(track => {
+      track.enabled = enabled;
+    });
+  }
+};
+
 export const webRtcService = {
   startLocalStream,
   createPeerConnection,
@@ -288,4 +304,6 @@ export const webRtcService = {
   handleReceivedIceCandidate,
   initializeSignaling,
   closeConnection,
+  toggleAudio,
+  toggleVideo,
 };
