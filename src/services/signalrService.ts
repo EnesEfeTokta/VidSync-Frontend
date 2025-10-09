@@ -1,76 +1,72 @@
 import * as signalR from "@microsoft/signalr";
+import { HubConnectionState } from "@microsoft/signalr";
 
-const HUB_URL = `${import.meta.env.VITE_API_URL}/communicationhub`;
+class SignalRService {
+  private connection: signalR.HubConnection;
+  private token: string | null = null;
 
-let connection: signalR.HubConnection | null = null;
-
-const connect = async () => {
-  const token = localStorage.getItem("authToken");
-  if (!token) {
-    throw new Error("No auth token found");
+  constructor() {
+    const hubUrl = `${import.meta.env.VITE_API_URL}/communicationhub`;
+    
+    this.connection = new signalR.HubConnectionBuilder()
+      .withUrl(hubUrl, {
+        accessTokenFactory: () => this.token || ""
+      })
+      .withAutomaticReconnect()
+      .build();
   }
 
-  if (connection && connection.state === signalR.HubConnectionState.Connected) {
-    console.log("SignalR already connected");
-    return connection;
+  public async connect(authToken: string) {
+    if (this.connection.state === HubConnectionState.Connected) {
+      console.log("SignalR already connected.");
+      return;
+    }
+    this.token = authToken;
+    try {
+      await this.connection.start();
+      console.log("SignalR Connected.");
+    } catch (err) {
+      console.error("SignalR Connection Error: ", err);
+      throw err;
+    }
   }
 
-  const encodedToken = encodeURIComponent(token);
-  const url = `${HUB_URL}?access_token=${encodedToken}`;
-
-  connection = new signalR.HubConnectionBuilder()
-    .withUrl(url, { withCredentials: false })
-    .withAutomaticReconnect({
-      nextRetryDelayInMilliseconds: (retryContext) =>
-        Math.min(1000 * Math.pow(2, retryContext.previousRetryCount), 30000),
-    })
-    .configureLogging(signalR.LogLevel.Information)
-    .build();
-
-  try {
-    await connection.start();
-    console.log("SignalR Connected.");
-    return connection;
-  } catch (err) {
-    console.error("SignalR Connection Error: ", err);
-    throw err;
-  }
-};
-
-const invoke = async (methodName: string, ...args: any[]) => {
-  if (!connection || connection.state !== signalR.HubConnectionState.Connected) {
-    await connect();
+  public async disconnect() {
+    if (this.connection.state !== HubConnectionState.Connected) {
+      return;
+    }
+    try {
+      await this.connection.stop();
+      console.log("SignalR Disconnected.");
+    } catch (err) {
+      console.error("SignalR Disconnection Error: ", err);
+    }
   }
 
-  try {
-    return await connection.invoke(methodName, ...args);
-  } catch (err) {
-    console.error(`Error invoking ${methodName}: `, err);
-    throw err;
-  }
-};
-
-const on = (eventName: string, callback: (...args: any[]) => void) => {
-  if (!connection) {
-    throw new Error("SignalR connection is not established");
+  public on(eventName: string, callback: (...args: any[]) => void) {
+    this.connection.on(eventName, callback);
   }
 
-  connection.on(eventName, (...args) => {
-    callback(...args);
-  });
-};
-
-const disconnect = () => {
-  if (connection) {
-    connection.stop();
-    connection = null;
-    console.log("SignalR Disconnected.");
+  public off(eventName: string) {
+    this.connection.off(eventName);
   }
-};
 
-export const signalrService = {
-  connect,
-  invoke,
-  on,
-  disconnect,
-};
+  public async invoke(methodName: string, ...args: any[]) {
+    if (this.connection.state !== HubConnectionState.Connected) {
+      console.error(`Cannot invoke '${methodName}'. Connection is not in the 'Connected' state.`);
+      throw new Error("SignalR connection is not active.");
+    }
+    try {
+      return await this.connection.invoke(methodName, ...args);
+    } catch (err) {
+      console.error(`Error invoking ${methodName}: `, err);
+      throw err;
+    }
+  }
+
+  public isConnected(): boolean {
+    return this.connection.state === HubConnectionState.Connected;
+  }
+}
+
+export const signalrService = new SignalRService();
