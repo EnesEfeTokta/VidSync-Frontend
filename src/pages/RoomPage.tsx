@@ -5,6 +5,10 @@ import { useAuth } from '../context/AuthContext';
 import { webRtcService } from '../services/webRtcService';
 import './RoomPage.css';
 
+import VideoPlayer from '../components/VideoPlayer';
+import ParticipantList from '../components/ParticipantList';
+import ChatWindow from '../components/ChatWindow';
+
 interface Participant {
   id: string;
   firstName: string;
@@ -33,13 +37,6 @@ const RoomPage: React.FC = () => {
   const peerUserIdRef = useRef<string | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-  }, [messages]);
 
   const handleHangUp = useCallback(() => {
     webRtcService.closeConnection();
@@ -221,74 +218,34 @@ const RoomPage: React.FC = () => {
 
   return (
     <div className="room-page-layout">
-      <div className="main-content">
-        <h1>Oda: {roomId}</h1>
-        <div className="videos-container">
-          <div>
-            <h3>Siz</h3>
-            <video ref={localVideoRef} autoPlay muted playsInline />
-          </div>
-          <div>
-            <h3>{peerUserIdRef.current ? participants.find(p => p.id === peerUserIdRef.current)?.firstName : 'Diğer Kullanıcı'}</h3>
-            <video ref={remoteVideoRef} autoPlay playsInline />
-          </div>
-        </div>
-        {isCallActive && (
-          <div className="controls-container">
-            <button onClick={handleToggleAudio}>
-              {isAudioEnabled ? 'Sesi Kapat' : 'Sesi Aç'}
-            </button>
-            <button onClick={handleToggleVideo}>
-              {isVideoEnabled ? 'Kamerayı Kapat' : 'Kamerayı Aç'}
-            </button>
-            <button onClick={handleHangUp} style={{ backgroundColor: 'red' }}>
-              Aramayı Sonlandır
-            </button>
-          </div>
-        )}
-      </div>
+      <h1>Oda: {roomId}</h1>
+      
+      <VideoPlayer
+        localVideoRef={localVideoRef}
+        remoteVideoRef={remoteVideoRef}
+        isCallActive={isCallActive}
+        isAudioEnabled={isAudioEnabled}
+        isVideoEnabled={isVideoEnabled}
+        remoteUserFirstName={participants.find(p => p.id === peerUserIdRef.current)?.firstName}
+        onToggleAudio={handleToggleAudio}
+        onToggleVideo={handleToggleVideo}
+        onHangUp={handleHangUp}
+      />
+
       <div className="sidebar">
-        <div className="participants-container">
-          <h2>Katılımcılar</h2>
-          <ul>
-            {participants.map(participant => (
-              <li key={participant.id}>
-                {participant.firstName} {participant.id === user?.id && "(Siz)"}
-                {participant.id !== user?.id && (
-                  <button onClick={() => handleCallUser(participant.id)} disabled={isCallActive}>
-                    Ara
-                  </button>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="chat-container">
-          <h2>Sohbet</h2>
-          <div className="message-list" ref={chatContainerRef}>
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`message ${msg.senderId === user?.id ? 'my-message' : 'other-message'}`}
-              >
-                <div className="message-sender">{msg.senderName}</div>
-                <div className="message-content">{msg.content}</div>
-                <div className="message-timestamp">
-                  {new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </div>
-              </div>
-            ))}
-          </div>
-          <form className="chat-input-form" onSubmit={handleSendMessage}>
-            <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Mesajınızı yazın..."
-            />
-            <button type="submit">Gönder</button>
-          </form>
-        </div>
+        <ParticipantList
+          participants={participants}
+          currentUserId={user?.id}
+          isCallActive={isCallActive}
+          onCallUser={handleCallUser}
+        />
+        <ChatWindow
+          messages={messages}
+          currentUserId={user?.id}
+          newMessage={newMessage}
+          onNewMessageChange={setNewMessage}
+          onSendMessage={handleSendMessage}
+        />
       </div>
     </div>
   );
