@@ -1,0 +1,51 @@
+.header {
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--header-footer-bg);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.logo {
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+}
+
+.nav-link {
+  margin-right: 1rem;
+  color: var(--text-color);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.user-greeting {
+  margin-right: 1rem;
+}
+
+.btn {
+  background: none;
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+  margin-left: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.btn:hover {
+  background-color: var(--primary-color);
+  color: var(--background-color);
+  border-color: var(--primary-color);
+}
+
+.theme-toggle {
+  margin-left: 1rem;
+}
