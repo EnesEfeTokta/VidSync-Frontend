@@ -1,0 +1,187 @@
+/* PricingPageStyles.css - İyileştirilmiş */
+
+.pricing-page-container {
+  background-color: var(--bg-primary);
+  width: 100%;
+  min-height: 100vh;
+  padding: 4rem 2rem;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.pricing-header {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 4rem auto;
+}
+
+.pricing-header h2 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.pricing-header p {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.pricing-cards-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: stretch; /* Kartların aynı boyda olmasını sağlar */
+  gap: 2rem;
+  flex-wrap: nowrap;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.pricing-card {
+  background-color: var(--bg-secondary);
+  border-radius: var(--border-radius-large);
+  padding: 2.5rem;
+  flex: 1; /* Esnek genişlik */
+  min-width: 300px;
+  position: relative;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--card-shadow);
+  transition: transform var(--transition-medium), box-shadow var(--transition-medium);
+  display: flex;
+  flex-direction: column;
+}
+
+.pricing-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 0 20px 5px var(--neon-glow-color);
+  z-index: 10;
+}
+
+.pricing-card.popular-card {
+  border-color: var(--primary-color);
+}
+
+.popular-badge {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--primary-color);
+  color: var(--text-on-primary);
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.card-header h3 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.card-price {
+  margin: 1.5rem 0 2rem 0;
+}
+
+.price-value {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.price-period {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-left: 5px;
+}
+
+.btn-pricing {
+  width: 100%;
+  padding: 1rem;
+  border-radius: var(--border-radius-medium);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  margin-top: auto; /* Butonu kartın en altına iter */
+}
+.btn-pricing:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.btn-pricing.primary {
+  background-color: var(--primary-color);
+  color: var(--text-on-primary);
+}
+
+.btn-pricing.primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-pricing.secondary {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.btn-pricing.secondary:hover {
+  background-color: var(--border-interactive);
+}
+
+.card-features {
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 2rem;
+}
+
+.features-label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.card-features ul {
+  list-style: none;
+}
+
+.card-features li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+
+.feature-icon {
+  color: var(--primary-color);
+  margin-right: 12px;
+  flex-shrink: 0; /* İkonun küçülmesini engeller */
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) {
+  .pricing-cards-wrapper {
+    flex-wrap: wrap;
+  }
+  .pricing-card.popular-card {
+    order: -1; /* Popüler kartı mobil düzende en üste taşır */
+    width: 100%;
+  }
+}
+
+@media (max-width: 780px) {
+  .pricing-header h2 {
+    font-size: 2.2rem;
+  }
+}

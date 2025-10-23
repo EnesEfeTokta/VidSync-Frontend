@@ -1,0 +1,185 @@
+/* LoginPageStyles.css - İyileştirilmiş */
+
+.login-page-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 450px;
+  background-color: var(--bg-secondary);
+  padding: 2.5rem;
+  border-radius: var(--border-radius-medium);
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+
+.logo {
+  margin-bottom: 1.5rem;
+  /* Logo SVG ise, `fill: var(--text-primary)` ekleyebilirsiniz */
+}
+
+.login-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.login-form {
+  width: 100%;
+}
+
+.login-form .form-group {
+  margin-bottom: 1.25rem;
+}
+
+.login-form label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.login-form .form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-options .remember-me {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.form-options a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+.form-options a:hover {
+  text-decoration: underline;
+}
+
+.separator {
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  line-height: 0.1em;
+  margin: 2rem 0;
+  color: var(--text-muted);
+}
+.separator:after {
+  content: "VEYA";
+  background: var(--bg-secondary); /* Arkaplan rengiyle eşleşmeli */
+  padding: 0 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.social-logins {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.social-login-btn {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--border-radius-small);
+  border: 1px solid var(--border-color);
+  background-color: transparent;
+  color: var(--text-primary);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.social-login-btn:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-interactive);
+}
+.social-login-btn:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.signup-link {
+  margin-top: 2rem;
+  color: var(--text-secondary);
+}
+.signup-link a {
+  color: var(--primary-color);
+  font-weight: 500;
+  text-decoration: none;
+}
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+/* Bu form elemanları ContactPageStyles'dan alınabilir veya burada özelleştirilebilir */
+.form-input {
+  width: 100%;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.9rem 1rem;
+  border-radius: var(--border-radius-small);
+  transition: border-color var(--transition-fast);
+  font-size: 1rem;
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}
+
+.submit-button {
+  width: 100%;
+  padding: 0.9rem;
+  border: none;
+  border-radius: var(--border-radius-small);
+  background-color: var(--primary-color);
+  color: var(--text-on-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.submit-button:hover {
+  background-color: var(--primary-hover);
+}
+.submit-button:active {
+    transform: translateY(1px);
+}
