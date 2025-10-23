@@ -24,6 +24,124 @@
   text-decoration: none;
   transition: color 0.3s;
 }
+/* --- Mevcut stil korunuyor --- */
+.header {
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--header-footer-bg);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+  position: relative; /* mobil menü konumu için */
+  z-index: 1000;
+}
+
+.logo {
+  text-decoration: none;
+  color: var(--text-color);
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+}
+
+.nav-link {
+  margin-right: 1rem;
+  color: var(--text-color);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.nav-link:hover {
+  color: var(--primary-color);
+}
+
+.user-greeting {
+  margin-right: 1rem;
+}
+
+.btn {
+  background: none;
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+  margin-left: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.btn:hover {
+  background-color: var(--primary-color);
+  color: var(--background-color);
+  border-color: var(--primary-color);
+}
+
+.theme-toggle {
+  margin-left: 1rem;
+}
+
+/* --- BURADAN İTİBAREN EKLEMELER --- */
+
+/* Menü butonu (hamburger) */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+/* Mobil menü kapalıyken gizli */
+.nav-mobile {
+  display: none;
+}
+
+/* Mobil menü açıkken aktif */
+.nav.open {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  flex-direction: column;
+  background-color: var(--header-footer-bg);
+  border-top: 1px solid var(--text-color);
+  padding: 1rem 2rem;
+  gap: 0.8rem;
+  animation: slideDown 0.3s ease forwards;
+}
+
+/* Küçük ekran düzeni */
+@media (max-width: 768px) {
+  .nav {
+    display: none;
+  }
+
+  .nav.open {
+    display: flex;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+}
+
+/* Küçük bir açılma animasyonu */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 .user-greeting {
   margin-right: 1rem;

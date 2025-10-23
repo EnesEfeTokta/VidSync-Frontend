@@ -27,3 +27,70 @@ a, button {
   color: var(--primary-color);
   transition: color 0.3s, background-color 0.3s;
 }
+:root {
+  /* ------------------------- */
+  /* --- AÇIK TEMA (VARSAYILAN) --- */
+  /* ------------------------- */
+  --primary-color: #5865F2;
+  --primary-hover: #4752C4;
+  --primary-light: rgba(88, 101, 242, 0.1);
+
+  --bg-primary: #ffffff;      /* Sayfa ana arkaplanı */
+  --bg-secondary: #f2f3f5;   /* Kartlar, paneller gibi ikincil arkaplanlar */
+  --bg-tertiary: #e3e5e8;     /* Vurgulu veya iç içe geçmiş elemanlar için */
+
+  --text-primary: #060607;     /* Ana metin rengi */
+  --text-secondary: #4e5058;   /* Daha az önemli, ikincil metinler */
+  --text-muted: #747f8d;       /* En az önemli metinler, placeholderlar */
+  --text-on-primary: #ffffff; /* Ana renk üzerindeki metinler (örn: buton) */
+
+  --border-color: #e3e5e8;
+  --border-interactive: #b5bac1;
+  --border-focus: var(--primary-color);
+
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --neon-glow-color: rgba(88, 101, 242, 0.3);
+
+  /* Genel Değişkenler */
+  --border-radius-small: 6px;
+  --border-radius-medium: 12px;
+  --border-radius-large: 24px;
+  --transition-fast: 0.2s ease;
+  --transition-medium: 0.3s ease;
+}
+
+html[data-theme='dark'] {
+  /* ------------------- */
+  /* --- KOYU TEMA --- */
+  /* ------------------- */
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #2b2d31;
+  --bg-tertiary: #313338;
+
+  --text-primary: #ffffff;
+  --text-secondary: #b5bac1;
+  --text-muted: #99aab5;
+
+  --border-color: #40444b;
+  --border-interactive: #5c6067;
+
+  --card-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  --card-shadow-hover: 0 10px 40px rgba(0, 0, 0, 0.3);
+  --neon-glow-color: rgba(88, 101, 242, 0.4);
+}
+
+
+/* Genel Sayfa Stilleri */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
