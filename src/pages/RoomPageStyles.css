@@ -1,0 +1,160 @@
+/* RoomPageStyles.css - Loom'dan İlham Alan Modern Arayüz */
+
+/* --- ANA SAYFA DÜZENİ --- */
+.room-page-layout {
+  display: grid;
+  grid-template-columns: 1fr auto; /* Ana içerik ve yan panel için sütunlar */
+  height: calc(100vh - 60px); /* Header yüksekliğini varsayarak (ayarlayabilirsiniz) */
+  width: 100%;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+/* --- ANA İÇERİK (VİDEO ALANI) --- */
+.main-content-area {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative; /* Kontrol paneli için */
+  background-color: #000; /* Video yüklenene kadar siyah arkaplan */
+}
+
+/* --- VİDEO OYNATICI --- */
+.video-player-wrapper {
+  flex-grow: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #141414;
+}
+
+.remote-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Görüntünün tamamının görünmesini sağlar */
+}
+
+.local-video-pip {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%; /* Daire şekli için */
+  object-fit: cover;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+.local-video-pip:hover {
+    transform: scale(1.05);
+    border-color: var(--primary-color);
+}
+
+.video-placeholder {
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+/* --- KONTROL PANELİ --- */
+.room-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1rem;
+  padding: 0.8rem 1.5rem;
+  background-color: rgba(30, 30, 30, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  z-index: 20;
+}
+
+.control-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+.control-btn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+.control-btn.hang-up {
+  background-color: #e74c3c;
+}
+.control-btn.hang-up:hover {
+  background-color: #c0392b;
+}
+
+
+/* --- YAN PANEL (KATILIMCILAR & SOHBET) --- */
+.sidebar-area {
+  width: 350px;
+  background-color: var(--bg-secondary);
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.sidebar-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 1rem;
+  background-color: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+}
+
+.sidebar-content {
+  flex-grow: 1;
+  overflow: hidden; /* İçeriklerin taşmasını engeller */
+}
+
+/* --- Katılımcı Listesi ve Sohbet Penceresi için stil entegrasyonu --- */
+/* (ParticipantList ve ChatWindow component'lerinizdeki stilleri buraya taşıyabilir veya buradan override edebilirsiniz) */
+
+.chat-container {
+  /* ... RoomPageStyles.css içerisindeki eski .chat-container stillerini buraya güncelleyerek taşıyın ... */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-list {
+  padding: 1rem;
+  /* ... diğerleri ... */
+}
