@@ -1,0 +1,145 @@
+/* ContactPageStyles.css - İyileştirilmiş */
+
+.contact-page-container {
+  background-color: var(--bg-primary);
+  width: 100%;
+  min-height: 100vh;
+  padding: 5rem 2rem;
+  color: var(--text-primary);
+}
+
+.contact-hero {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 4rem auto;
+}
+
+.contact-hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.contact-hero p {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.contact-main-content {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 3rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.contact-info-panel h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.contact-method {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.contact-method-icon {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-top: 5px;
+}
+
+.contact-method h4 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.contact-method a, .contact-method p {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.contact-method a:hover {
+  color: var(--primary-color);
+}
+
+.contact-form-container {
+  background-color: var(--bg-secondary);
+  padding: 2.5rem;
+  border-radius: var(--border-radius-medium);
+  border: 1px solid var(--border-color);
+}
+
+.contact-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.contact-form label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none; /* İkonun tıklamayı engellemesini önler */
+}
+
+textarea ~ .input-icon {
+  top: 1rem;
+  transform: none;
+}
+
+.form-input {
+  width: 100%;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.9rem 1rem 0.9rem 3rem; /* İkon için soldan boşluk */
+  border-radius: var(--border-radius-small);
+  transition: border-color var(--transition-fast);
+  font-size: 1rem;
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}
+.form-input:focus ~ .input-icon {
+    color: var(--primary-color);
+}
+
+textarea.form-input {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
+  .contact-main-content {
+    grid-template-columns: 1fr;
+  }
+}
