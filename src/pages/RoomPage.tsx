@@ -3,30 +3,29 @@ import { useParams } from 'react-router-dom';
 import { signalrService } from '../services/signalrService';
 import { useAuth } from '../context/AuthContext';
 import { webRtcService } from '../services/webRtcService';
-import './RoomPage.css';
-
-import VideoPlayer from '../components/VideoPlayer';
 import ParticipantList from '../components/ParticipantList';
 import ChatWindow from '../components/ChatWindow';
 
-interface Participant {
-  id: string;
-  firstName: string;
-}
+// Gerekli ikonları import edelim
+import { 
+  FaMicrophone, FaMicrophoneSlash, 
+  FaVideo, FaVideoSlash, 
+  FaPhoneSlash, FaUsers, FaComment 
+} from 'react-icons/fa';
 
-interface ChatMessage {
-  id: string;
-  content: string;
-  sentAt: string;
-  senderId: string;
-  senderName: string;
-  roomId: string;
-}
+// Stil dosyasını import ediyoruz
+import './RoomPageStyles.css';
+
+// ... (Interface tanımlarınız burada kalabilir) ...
+interface Participant { id: string; firstName: string; }
+interface ChatMessage { id: string; content: string; sentAt: string; senderId: string; senderName: string; roomId: string; }
+
 
 const RoomPage: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const { user, token } = useAuth();
-
+  
+  // ... (Mevcut state'leriniz burada kalabilir) ...
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [isCallActive, setIsCallActive] = useState<boolean>(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
@@ -34,10 +33,18 @@ const RoomPage: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
 
+  // Yan paneldeki sekmeyi yönetmek için yeni state
+  const [activeTab, setActiveTab] = useState<'participants' | 'chat'>('participants');
+
   const peerUserIdRef = useRef<string | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-
+  
+  // ... (Mevcut tüm fonksiyonlarınız ve useEffect hook'unuz HİÇBİR DEĞİŞİKLİK OLMADAN burada kalabilir) ...
+  // handleHangUp, setupWebRTCConnection, useEffect, handleCallUser,
+  // handleToggleAudio, handleToggleVideo, handleSendMessage
+  // Bunlar mantıksal işlevler olduğu için tasarımdan etkilenmezler.
+  
   const handleHangUp = useCallback(() => {
     webRtcService.closeConnection();
     if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
@@ -81,8 +88,8 @@ const RoomPage: React.FC = () => {
       handleHangUp();
     }
   }, [handleHangUp]);
-
-  useEffect(() => {
+  
+    useEffect(() => {
     if (!roomId || !user || !token) {
       console.log("useEffect dependencies not ready, skipping setup.", { roomId, user, token });
       return;
@@ -218,35 +225,68 @@ const RoomPage: React.FC = () => {
 
   return (
     <div className="room-page-layout">
-      <h1>Oda: {roomId}</h1>
-      
-      <VideoPlayer
-        localVideoRef={localVideoRef}
-        remoteVideoRef={remoteVideoRef}
-        isCallActive={isCallActive}
-        isAudioEnabled={isAudioEnabled}
-        isVideoEnabled={isVideoEnabled}
-        remoteUserFirstName={participants.find(p => p.id === peerUserIdRef.current)?.firstName}
-        onToggleAudio={handleToggleAudio}
-        onToggleVideo={handleToggleVideo}
-        onHangUp={handleHangUp}
-      />
+      {/* Ana Video ve Kontrol Alanı */}
+      <main className="main-content-area">
+        <div className="video-player-wrapper">
+          <video ref={remoteVideoRef} className="remote-video" autoPlay playsInline />
+          <video ref={localVideoRef} className="local-video-pip" autoPlay playsInline muted />
+          {!isCallActive && (
+            <div className="video-placeholder">
+              <p>Görüşmeyi başlatmak için katılımcılar listesinden birini arayın.</p>
+            </div>
+          )}
+        </div>
 
-      <div className="sidebar">
-        <ParticipantList
-          participants={participants}
-          currentUserId={user?.id}
-          isCallActive={isCallActive}
-          onCallUser={handleCallUser}
-        />
-        <ChatWindow
-          messages={messages}
-          currentUserId={user?.id}
-          newMessage={newMessage}
-          onNewMessageChange={setNewMessage}
-          onSendMessage={handleSendMessage}
-        />
-      </div>
+        {isCallActive && (
+            <div className="room-controls">
+                <button className="control-btn" onClick={handleToggleAudio}>
+                    {isAudioEnabled ? <FaMicrophone /> : <FaMicrophoneSlash />}
+                </button>
+                <button className="control-btn" onClick={handleToggleVideo}>
+                    {isVideoEnabled ? <FaVideo /> : <FaVideoSlash />}
+                </button>
+                <button className="control-btn hang-up" onClick={handleHangUp}>
+                    <FaPhoneSlash />
+                </button>
+            </div>
+        )}
+      </main>
+
+      {/* Yan Panel (Katılımcılar ve Sohbet) */}
+      <aside className="sidebar-area">
+        <div className="sidebar-tabs">
+          <button 
+            className={`tab-btn ${activeTab === 'participants' ? 'active' : ''}`}
+            onClick={() => setActiveTab('participants')}
+          >
+            <FaUsers /> Katılımcılar
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`}
+            onClick={() => setActiveTab('chat')}
+          >
+            <FaComment /> Sohbet
+          </button>
+        </div>
+        <div className="sidebar-content">
+          {activeTab === 'participants' ? (
+            <ParticipantList
+              participants={participants}
+              currentUserId={user?.id}
+              isCallActive={isCallActive}
+              onCallUser={handleCallUser}
+            />
+          ) : (
+            <ChatWindow
+              messages={messages}
+              currentUserId={user?.id}
+              newMessage={newMessage}
+              onNewMessageChange={setNewMessage}
+              onSendMessage={handleSendMessage}
+            />
+          )}
+        </div>
+      </aside>
     </div>
   );
 };
