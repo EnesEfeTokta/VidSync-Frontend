@@ -1,21 +1,19 @@
 // src/App.tsx
-
-import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import Home from "./pages/HomePage";
-import About from "./pages/AboutPage";
-import Pricing from "./pages/PricingPage";
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import DashboardPage from './pages/DashboardPage';
-import FAQ from "./pages/FAQPage";
-import Contact from "./pages/ContactPage";
-import RoomPage from './pages/RoomPage';
+import Home from "./pages/HomePage/HomePage";
+import About from "./pages/AboutPage/AboutPage";
+import Pricing from "./pages/PricingPage/PricingPage";
+import LoginPage from './pages/LoginPage/LoginPage';
+import RegisterPage from './pages/RegisterPage/RegisterPage';
+import DashboardPage from './pages/DashboardPage/DashboardPage';
+import FAQ from "./pages/FAQPage/FAQPage";
+import Contact from "./pages/ContactPage/ContactPage";
+import RoomPage from './pages/RoomPage/RoomPage';
 import { ThemeProvider } from "./context/ThemeContext";
 import "./App.css";
-import ProtectedRoute from "./router/ProtectedRoute";
+
 
 function App() {
   return (
