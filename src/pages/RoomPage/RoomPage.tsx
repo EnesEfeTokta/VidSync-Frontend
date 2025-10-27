@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { signalrService } from '../services/signalrService';
-import { useAuth } from '../context/AuthContext';
-import { webRtcService } from '../services/webRtcService';
-import ParticipantList from '../components/ParticipantList';
-import ChatWindow from '../components/ChatWindow';
+import { signalrService } from '../../services/signalrService';
+import { useAuth } from '../../context/AuthContext';
+import { webRtcService } from '../../services/webRtcService';
+import ParticipantList from '../../components/ParticipantList';
+import ChatWindow from '../../components/ChatWindow';
 
 // Gerekli ikonları import edelim
 import { 

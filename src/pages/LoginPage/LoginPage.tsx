@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useLocation, Link } from "react-router-dom"; // Sayfalar arası geçiş için Link eklendi
-import LoginForm from "../components/LoginForm"; // Bu component'in var olduğunu varsayıyoruz
+import LoginForm from "../../components/LoginForm"; // Bu component'in var olduğunu varsayıyoruz
 import "../App.css";
 import './LoginPageStyles.css'; // Sayfaya özel stilleri import ediyoruz
 
