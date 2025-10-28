@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { ThemeContext } from "../context/ThemeContext";
 import { Facebook, Twitter, Instagram } from "lucide-react";
-import { connect } from "net";
 
 const Footer: React.FC = () => {
   const { theme } = useContext(ThemeContext);

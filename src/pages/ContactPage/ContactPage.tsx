@@ -3,7 +3,7 @@
 import React from 'react';
 // Sayfaya özel ve genel stil dosyalarını içe aktaralım
 import './ContactPageStyles.css';
-import "../App.css";
+import "../../App.css";
 import { FaUser, FaEnvelope, FaPen, FaQuestionCircle, FaMapMarkerAlt } from 'react-icons/fa';
 
 // --- Veri Odaklı Yapı ---

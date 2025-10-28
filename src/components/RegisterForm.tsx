@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import type { RegisterData } from '../types/RegisterData';
 import { useAuth } from '../context/AuthContext';
 // Stil dosyalarını buraya da eklemek, component'in kendi başına test edilmesini kolaylaştırır.
-import '../pages/LoginPageStyles.css';
+import '../pages/RegisterPage/RegisterPageStyles.css';
 
 const RegisterForm: React.FC = () => {
   const { register } = useAuth();
