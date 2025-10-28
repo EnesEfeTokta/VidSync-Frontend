@@ -3,8 +3,8 @@
 import React from "react";
 import { Link } from "react-router-dom"; // Giriş sayfasına link vermek için
 import RegisterForm from "../../components/RegisterForm";
-import "../App.css";
-import './LoginPageStyles.css'; // Ortak login/register stil dosyası
+import "../../App.css";
+import './RegisterPageStyles.css';
 
 const RegisterPage: React.FC = () => {
   return (

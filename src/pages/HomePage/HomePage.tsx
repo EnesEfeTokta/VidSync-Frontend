@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Video, Shield, MessageCircle, UserPlus, Settings, Send, Star } from "lucide-react";
-import "../App.css"; // mevcut renk değişkenleri ve temalar için
+import "../../App.css"; // mevcut renk değişkenleri ve temalar için
 
 const HomePage: React.FC = () => {
   return (

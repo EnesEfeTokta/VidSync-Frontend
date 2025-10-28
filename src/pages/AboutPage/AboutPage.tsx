@@ -3,7 +3,7 @@
 import React from 'react';
 // Stil dosyaları - Projenizin yapısına göre AboutPageStyles.css dosyasını da içermelidir.
 import './AboutPageStyles.css'; 
-import "../App.css"; 
+import "../../App.css"; 
 
 // Değerler dizisi, bileşen dışında tanımlanarak her render'da yeniden oluşturulması engellenir.
 const values = [

@@ -1,7 +1,7 @@
 // src/pages/PricingPage.tsx
 
 import React from 'react';
-import "../App.css";
+import "../../App.css";
 import './PricingPageStyles.css'; // Sayfaya özel stilleri import ediyoruz
 import { FaCheck } from 'react-icons/fa';
 

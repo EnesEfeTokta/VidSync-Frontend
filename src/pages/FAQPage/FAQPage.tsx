@@ -1,7 +1,7 @@
 // src/pages/FAQPage.tsx
 
 import React from 'react';
-import "../App.css";
+import "../../App.css";
 import './FAQPageStyles.css'; // Sayfaya özel stiller
 import { 
   FaBook, 

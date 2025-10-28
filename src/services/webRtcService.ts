@@ -73,7 +73,7 @@ const createPeerConnection = (onStreamReceived: (stream: MediaStream) => void, t
       remoteStream!.addTrack(track);
     });
     if (onRemoteStreamCallback) {
-      onRemoteStreamCallback(remoteStream);
+      onRemoteStreamCallback(remoteStream!);
     }
   };
 

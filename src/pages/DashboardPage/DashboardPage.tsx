@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { roomService } from '../services/roomService';
+import { roomService } from '../../services/roomService';
 import { FaPlus, FaVideo } from 'react-icons/fa';
 
 // Stil dosyalarını import ediyoruz
