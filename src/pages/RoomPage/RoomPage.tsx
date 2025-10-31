@@ -6,44 +6,32 @@ import { webRtcService } from '../../services/webRtcService';
 import ParticipantList from '../../components/ParticipantList';
 import ChatWindow from '../../components/ChatWindow';
 
-// Gerekli ikonları import edelim
 import { 
   FaMicrophone, FaMicrophoneSlash, 
   FaVideo, FaVideoSlash, 
   FaPhoneSlash, FaUsers, FaComment 
 } from 'react-icons/fa';
 
-// Stil dosyasını import ediyoruz
 import './RoomPageStyles.css';
 
-// ... (Interface tanımlarınız burada kalabilir) ...
 interface Participant { id: string; firstName: string; }
 interface ChatMessage { id: string; content: string; sentAt: string; senderId: string; senderName: string; roomId: string; }
-
 
 const RoomPage: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const { user, token } = useAuth();
   
-  // ... (Mevcut state'leriniz burada kalabilir) ...
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [isCallActive, setIsCallActive] = useState<boolean>(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
-
-  // Yan paneldeki sekmeyi yönetmek için yeni state
   const [activeTab, setActiveTab] = useState<'participants' | 'chat'>('participants');
 
   const peerUserIdRef = useRef<string | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  
-  // ... (Mevcut tüm fonksiyonlarınız ve useEffect hook'unuz HİÇBİR DEĞİŞİKLİK OLMADAN burada kalabilir) ...
-  // handleHangUp, setupWebRTCConnection, useEffect, handleCallUser,
-  // handleToggleAudio, handleToggleVideo, handleSendMessage
-  // Bunlar mantıksal işlevler olduğu için tasarımdan etkilenmezler.
   
   const handleHangUp = useCallback(() => {
     webRtcService.closeConnection();
@@ -72,12 +60,22 @@ const RoomPage: React.FC = () => {
       peerUserIdRef.current = targetUserId;
       setIsAudioEnabled(true);
       setIsVideoEnabled(true);
+
       const handleRemoteStream = (stream: MediaStream) => {
-        if (remoteVideoRef.current && remoteVideoRef.current.srcObject !== stream) {
-          remoteVideoRef.current.srcObject = stream;
-          console.log("Remote stream attached to video element.");
+        const videoElement = remoteVideoRef.current;
+        if (videoElement && videoElement.srcObject !== stream) {
+          videoElement.srcObject = stream;
+          console.log("Uzak akış video elementine başarıyla eklendi.");
+          
+          const playPromise = videoElement.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(error => {
+              console.error("Uzak video oynatılırken hata oluştu (autoplay engellenmiş olabilir):", error);
+            });
+          }
         }
       };
+
       webRtcService.createPeerConnection(handleRemoteStream, targetUserId);
       if (isInitiator) {
         await webRtcService.createOffer(targetUserId);
@@ -89,7 +87,7 @@ const RoomPage: React.FC = () => {
     }
   }, [handleHangUp]);
   
-    useEffect(() => {
+  useEffect(() => {
     if (!roomId || !user || !token) {
       console.log("useEffect dependencies not ready, skipping setup.", { roomId, user, token });
       return;
@@ -139,7 +137,7 @@ const RoomPage: React.FC = () => {
         } catch (error) {
           console.error(error);
         }
-      };
+    };
 
     const setupSignaling = async () => {
       try {
@@ -225,7 +223,6 @@ const RoomPage: React.FC = () => {
 
   return (
     <div className="room-page-layout">
-      {/* Ana Video ve Kontrol Alanı */}
       <main className="main-content-area">
         <div className="video-player-wrapper">
           <video ref={remoteVideoRef} className="remote-video" autoPlay playsInline />
@@ -252,7 +249,6 @@ const RoomPage: React.FC = () => {
         )}
       </main>
 
-      {/* Yan Panel (Katılımcılar ve Sohbet) */}
       <aside className="sidebar-area">
         <div className="sidebar-tabs">
           <button 

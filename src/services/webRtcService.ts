@@ -2,7 +2,6 @@ import { signalrService } from './signalrService';
 
 let peerConnection: RTCPeerConnection | null = null;
 let localStream: MediaStream | null = null;
-let remoteStream: MediaStream | null = null;
 let onRemoteStreamCallback: ((stream: MediaStream) => void) | null = null;
 const iceCandidateQueue: RTCIceCandidateInit[] = [];
 
@@ -18,23 +17,13 @@ const ICE_SERVERS = {
   ],
 };
 
-const serializeSdp = (description: RTCSessionDescriptionInit): string => {
-  return JSON.stringify({ type: description.type, sdp: description.sdp });
-};
+// Yardımcı fonksiyonlar (değişiklik yok)
+const serializeSdp = (description: RTCSessionDescriptionInit): string => JSON.stringify(description);
+const deserializeSdp = (sdpString: string): RTCSessionDescriptionInit => JSON.parse(sdpString);
+const serializeIceCandidate = (candidate: RTCIceCandidate): string => JSON.stringify(candidate.toJSON());
+const deserializeIceCandidate = (candidateString: string): RTCIceCandidateInit => JSON.parse(candidateString);
 
-const deserializeSdp = (sdpString: string): RTCSessionDescriptionInit => {
-  const parsed = JSON.parse(sdpString);
-  return { type: parsed.type as RTCSdpType, sdp: parsed.sdp };
-};
-
-const serializeIceCandidate = (candidate: RTCIceCandidate): string => {
-  return JSON.stringify(candidate.toJSON());
-};
-
-const deserializeIceCandidate = (candidateString: string): RTCIceCandidateInit => {
-  return JSON.parse(candidateString);
-};
-
+// startLocalStream (değişiklik yok)
 const startLocalStream = async (): Promise<MediaStream> => {
   try {
     if (localStream && localStream.active) {
@@ -55,6 +44,8 @@ const startLocalStream = async (): Promise<MediaStream> => {
   }
 };
 
+// --- GÜNCELLEME BAŞLANGICI (1/2) ---
+// 'ontrack' metodunu daha güvenilir hale getirdik.
 const createPeerConnection = (onStreamReceived: (stream: MediaStream) => void, targetUserId: string) => {
   if (!targetUserId) {
     console.error("Target user ID is undefined for peer connection.");
@@ -65,15 +56,15 @@ const createPeerConnection = (onStreamReceived: (stream: MediaStream) => void, t
   }
 
   peerConnection = new RTCPeerConnection(ICE_SERVERS);
-  remoteStream = new MediaStream();
   onRemoteStreamCallback = onStreamReceived;
 
+  // DÜZELTME: Gelen medya akışını doğrudan event'ten alarak daha güvenilir hale getiriyoruz.
   peerConnection.ontrack = (event) => {
-    event.streams[0].getTracks().forEach(track => {
-      remoteStream!.addTrack(track);
-    });
-    if (onRemoteStreamCallback) {
-      onRemoteStreamCallback(remoteStream!);
+    console.log(`[WEBRTC] Uzak medya izi (track) alındı! Tür: ${event.track.kind}`);
+    if (event.streams && event.streams[0]) {
+      if (onRemoteStreamCallback) {
+        onRemoteStreamCallback(event.streams[0]);
+      }
     }
   };
 
@@ -91,6 +82,9 @@ const createPeerConnection = (onStreamReceived: (stream: MediaStream) => void, t
     if (peerConnection?.connectionState === 'failed') {
       peerConnection?.restartIce();
     }
+     if (peerConnection?.connectionState === 'connected') {
+        console.log("Peer-to-Peer bağlantısı başarıyla kuruldu!");
+    }
   };
 
   if (localStream) {
@@ -100,6 +94,7 @@ const createPeerConnection = (onStreamReceived: (stream: MediaStream) => void, t
   }
 };
 
+// createOffer (değişiklik yok)
 const createOffer = async (targetUserId: string) => {
   if (!peerConnection || !targetUserId) return;
   try {
@@ -112,6 +107,7 @@ const createOffer = async (targetUserId: string) => {
   }
 };
 
+// handleReceivedOffer (değişiklik yok)
 const handleReceivedOffer = async (callerId: string, serializedOffer: string) => {
   if (!peerConnection || !callerId || !serializedOffer) return;
   try {
@@ -127,6 +123,7 @@ const handleReceivedOffer = async (callerId: string, serializedOffer: string) =>
   }
 };
 
+// handleReceivedAnswer (değişiklik yok)
 const handleReceivedAnswer = async (serializedAnswer: string) => {
   if (!peerConnection || !serializedAnswer) return;
   try {
@@ -138,6 +135,7 @@ const handleReceivedAnswer = async (serializedAnswer: string) => {
   }
 };
 
+// handleReceivedIceCandidate (değişiklik yok)
 const handleReceivedIceCandidate = async (candidateString: string) => {
   if (!peerConnection || !peerConnection.remoteDescription) {
     iceCandidateQueue.push(deserializeIceCandidate(candidateString));
@@ -151,6 +149,7 @@ const handleReceivedIceCandidate = async (candidateString: string) => {
   }
 };
 
+// processIceCandidateQueue (değişiklik yok)
 const processIceCandidateQueue = async () => {
   if (!peerConnection || !peerConnection.remoteDescription) return;
   while (iceCandidateQueue.length > 0) {
@@ -163,6 +162,7 @@ const processIceCandidateQueue = async () => {
   }
 };
 
+// cleanupSignaling (değişiklik yok)
 const cleanupSignaling = () => {
   signalrService.off('ReceiveOffer');
   signalrService.off('ReceiveAnswer');
@@ -170,17 +170,31 @@ const cleanupSignaling = () => {
   console.log("WebRTC signaling listeners removed.");
 };
 
+// --- GÜNCELLEME BAŞLANGICI (2/2) ---
+// Hub'daki düzeltmeyle uyumlu hale getiriyoruz.
 const initializeSignaling = (createPeerConnectionForOffer: (callerId: string) => Promise<void>) => {
   cleanupSignaling();
+  
   signalrService.on('ReceiveOffer', async (callerId: string, serializedOffer: string) => {
     await createPeerConnectionForOffer(callerId);
     await handleReceivedOffer(callerId, serializedOffer);
   });
-  signalrService.on('ReceiveAnswer', handleReceivedAnswer);
-  signalrService.on('ReceiveIceCandidate', handleReceivedIceCandidate);
+  
+  // DÜZELTME: Sunucudan artık (gönderenId, veri) şeklinde gelecek olan olayları dinliyoruz.
+  signalrService.on('ReceiveAnswer', async (answererId: string, serializedAnswer: string) => {
+    console.log(`[SIGNALR] ${answererId} kullanıcısından bir cevap (answer) alındı.`);
+    await handleReceivedAnswer(serializedAnswer);
+  });
+  
+  signalrService.on('ReceiveIceCandidate', async (senderId: string, candidate: string) => {
+    console.log(`[SIGNALR] ${senderId} kullanıcısından bir ICE adayı alındı.`);
+    await handleReceivedIceCandidate(candidate);
+  });
+
   console.log("WebRTC signaling listeners initialized.");
 };
 
+// closeConnection (remoteStream temizliği kaldırıldı, artık gerekli değil)
 const closeConnection = () => {
   if (peerConnection) {
     peerConnection.ontrack = null;
@@ -194,20 +208,16 @@ const closeConnection = () => {
     localStream.getTracks().forEach(track => track.stop());
     localStream = null;
   }
-  if (remoteStream) {
-    remoteStream.getTracks().forEach(track => track.stop());
-    remoteStream = null;
-  }
   onRemoteStreamCallback = null;
   iceCandidateQueue.length = 0;
 };
 
+// toggleAudio ve toggleVideo (değişiklik yok)
 const toggleAudio = (enabled: boolean) => {
   if (localStream) {
     localStream.getAudioTracks().forEach(track => { track.enabled = enabled; });
   }
 };
-
 const toggleVideo = (enabled: boolean) => {
   if (localStream) {
     localStream.getVideoTracks().forEach(track => { track.enabled = enabled; });
