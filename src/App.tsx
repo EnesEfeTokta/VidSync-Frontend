@@ -1,7 +1,12 @@
 // src/App.tsx
 import { Routes, Route } from "react-router-dom";
+
+// Bileşen (Component) importları
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import ChatWidget from "./components/ChatBot/ChatWidget"; // <-- 1. YENİ EKLENEN SATIR
+
+// Sayfa (Page) importları
 import Home from "./pages/HomePage/HomePage";
 import About from "./pages/AboutPage/AboutPage";
 import Pricing from "./pages/PricingPage/PricingPage";
@@ -11,6 +16,9 @@ import DashboardPage from './pages/DashboardPage/DashboardPage';
 import FAQ from "./pages/FAQPage/FAQPage";
 import Contact from "./pages/ContactPage/ContactPage";
 import RoomPage from './pages/RoomPage/RoomPage';
+// ChatBotPage artık kullanılmıyor, bu yüzden importunu sildik.
+
+// Context ve Global Stil importları
 import { ThemeProvider } from "./context/ThemeContext";
 import "./App.css";
 
@@ -34,20 +42,10 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            
+            {/* Chatbot rotasını buradan kaldırdık */}
 
             {/* --- GELİŞTİRME AMACIYLA GEÇİCİ DEĞİŞİKLİK --- */}
-
-            {/* Orijinal Korumalı Rota Bloğu (ŞİMDİLİK YORUM SATIRINDA) */}
-            {/* 
-              // Backend tekrar aktif olduğunda bu bloğu geri açacaksınız.
-              <Route element={<ProtectedRoute />}>
-                <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/rooms/:roomId" element={<RoomPage />} />
-              </Route>
-            */}
-
-            {/* GEÇİCİ OLARAK HERKESE AÇIK HALE GETİRİLEN ROTALAR */}
-            {/* Artık bu sayfalara direkt olarak erişilebilir. */}
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/rooms/:roomId" element={<RoomPage />} />
             
@@ -55,6 +53,9 @@ function App() {
         </main>
 
         <Footer />
+
+        {/* GEZGİN CHATBOT BİLEŞENİNİ BURAYA YERLEŞTİRİYORUZ */}
+        <ChatWidget /> {/* <-- 2. YENİ EKLENEN SATIR */}
       </div>
     </ThemeProvider>
   );
