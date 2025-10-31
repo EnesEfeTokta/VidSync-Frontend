@@ -9,7 +9,8 @@ import ChatWindow from '../../components/ChatWindow';
 import { 
   FaMicrophone, FaMicrophoneSlash, 
   FaVideo, FaVideoSlash, 
-  FaPhoneSlash, FaUsers, FaComment 
+  FaPhoneSlash, FaUsers, FaComment,
+  FaChevronRight, FaChevronLeft
 } from 'react-icons/fa';
 
 import './RoomPageStyles.css';
@@ -27,12 +28,16 @@ const RoomPage: React.FC = () => {
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'participants' | 'chat'>('participants');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const peerUserIdRef = useRef<string | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  
+
   const handleHangUp = useCallback(() => {
     webRtcService.closeConnection();
     if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
@@ -41,20 +46,20 @@ const RoomPage: React.FC = () => {
     peerUserIdRef.current = null;
     setIsAudioEnabled(true);
     setIsVideoEnabled(true);
-    console.log("Call hung up and streams cleared.");
+    console.log("Arama sonlandırıldı ve akışlar temizlendi.");
   }, []);
 
   const setupWebRTCConnection = useCallback(async (targetUserId: string, isInitiator: boolean) => {
     if (!targetUserId) {
-      console.error("Target user ID is undefined");
+      console.error("Hedef kullanıcı ID'si tanımsız.");
       return;
     }
-    console.log(`Setting up WebRTC connection to ${targetUserId}. Initiator: ${isInitiator}`);
+    console.log(`${targetUserId} kullanıcısı ile WebRTC bağlantısı kuruluyor. Başlatan: ${isInitiator}`);
     try {
       const localStream = await webRtcService.startLocalStream();
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = localStream;
-        console.log("Local stream attached to video element.");
+        console.log("Yerel akış video elementine eklendi.");
       }
       setIsCallActive(true);
       peerUserIdRef.current = targetUserId;
@@ -62,17 +67,29 @@ const RoomPage: React.FC = () => {
       setIsVideoEnabled(true);
 
       const handleRemoteStream = (stream: MediaStream) => {
+        if (!stream || !stream.active || stream.getTracks().length === 0) {
+            console.warn("handleRemoteStream çağrıldı ancak geçersiz veya boş bir akış alındı.");
+            return;
+        }
         const videoElement = remoteVideoRef.current;
-        if (videoElement && videoElement.srcObject !== stream) {
-          videoElement.srcObject = stream;
-          console.log("Uzak akış video elementine başarıyla eklendi.");
-          
-          const playPromise = videoElement.play();
-          if (playPromise !== undefined) {
-            playPromise.catch(error => {
-              console.error("Uzak video oynatılırken hata oluştu (autoplay engellenmiş olabilir):", error);
-            });
+        console.log(`handleRemoteStream çağrıldı. Uzak akış ID: ${stream.id}. Video elementi mevcut mu: ${!!videoElement}`);
+        if (videoElement) {
+          if (videoElement.srcObject !== stream) {
+            console.log("Video elementinin srcObject'i yeni uzak akış ile güncelleniyor.");
+            videoElement.srcObject = stream;
+            
+            const playPromise = videoElement.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(error => {
+                console.error("Uzak video otomatik oynatılamadı. Tarayıcı engellemiş olabilir.", error);
+                alert("Karşı tarafın videosu tarayıcı kısıtlamaları nedeniyle otomatik başlatılamadı. Videoyu başlatmak için ekrana tıklamanız gerekebilir.");
+              });
+            }
+          } else {
+            console.log("Gelen uzak akış zaten video elementine atanmış. İşlem yapılmadı.");
           }
+        } else {
+            console.error("Uzak akış alındı ancak remoteVideoRef.current mevcut değil! React render döngüsüyle ilgili bir sorun olabilir.");
         }
       };
 
@@ -81,35 +98,29 @@ const RoomPage: React.FC = () => {
         await webRtcService.createOffer(targetUserId);
       }
     } catch (error) {
-      console.error("Failed to setup WebRTC", error);
+      console.error("WebRTC kurulumu başarısız oldu", error);
       alert(`WebRTC kurulumunda hata: ${error instanceof Error ? error.message : "Bilinmeyen bir hata."}`);
       handleHangUp();
     }
   }, [handleHangUp]);
   
   useEffect(() => {
-    if (!roomId || !user || !token) {
-      console.log("useEffect dependencies not ready, skipping setup.", { roomId, user, token });
-      return;
-    }
+    if (!roomId || !user || !token) return;
 
     let isComponentMounted = true;
-    console.log("RoomPage useEffect triggered: Mount");
+    console.log("RoomPage useEffect tetiklendi: Component bağlandı");
 
     const onExistingParticipants = (existingUsers: Participant[]) => {
       if (!isComponentMounted) return;
-      console.log("Received ExistingParticipants:", existingUsers);
       const currentUser = { id: user.id, firstName: user.firstName };
       setParticipants([currentUser, ...existingUsers.filter(p => p.id !== user.id)]);
     };
     const onUserJoined = (joinedUser: Participant) => {
       if (!isComponentMounted) return;
-      console.log("Received UserJoined:", joinedUser);
       setParticipants(prev => prev.find(p => p.id === joinedUser.id) ? prev : [...prev, joinedUser]);
     };
     const onUserLeft = (leftUserId: string) => {
       if (!isComponentMounted) return;
-      console.log("Received UserLeft:", leftUserId);
       setParticipants(prev => prev.filter(p => p.id !== leftUserId));
       if (peerUserIdRef.current === leftUserId) {
         alert("Görüşmedeki kişi odadan ayrıldı.");
@@ -118,75 +129,59 @@ const RoomPage: React.FC = () => {
     };
     const onReceiveMessage = (newMessage: ChatMessage) => {
       if (!isComponentMounted) return;
-      console.log("Received ReceiveMessage:", newMessage);
       setMessages(prev => [...prev, newMessage]);
     };
 
-    const fetchChatHistory = async () => {
-        try {
-          const apiBaseUrl = import.meta.env.VITE_API_URL;
-          const response = await fetch(`${apiBaseUrl}/api/rooms/${roomId}/messages`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (!response.ok) {
-             const errorText = await response.text();
-             throw new Error(`Sohbet geçmişi alınamadı: ${response.status} ${errorText}`);
-          }
-          const history: ChatMessage[] = await response.json();
-          if (isComponentMounted) setMessages(history);
-        } catch (error) {
-          console.error(error);
-        }
-    };
-
-    const setupSignaling = async () => {
-      try {
-        await signalrService.connect(token);
-        if (!isComponentMounted) return;
-        console.log("SignalR connected successfully. Setting up listeners and joining room...");
-
-        signalrService.on('ExistingParticipants', onExistingParticipants);
-        signalrService.on('UserJoined', onUserJoined);
-        signalrService.on('UserLeft', onUserLeft);
-        signalrService.on('ReceiveMessage', onReceiveMessage);
-        
-        webRtcService.initializeSignaling(async (callerId: string) => {
-          if (!isComponentMounted || peerUserIdRef.current) return;
-          await setupWebRTCConnection(callerId, false);
-        });
-
-        await signalrService.invoke('JoinRoom', roomId);
-        console.log(`Successfully invoked 'JoinRoom' for room: ${roomId}`);
-        
-      } catch (error) {
-        console.error("SignalR setup or JoinRoom invocation failed:", error);
-      }
-    };
-
     const initializePage = async () => {
-        await fetchChatHistory();
-        if(isComponentMounted) {
-            await setupSignaling();
+        setIsLoading(true);
+        setError(null);
+        try {
+            const apiBaseUrl = import.meta.env.VITE_API_URL;
+            const response = await fetch(`${apiBaseUrl}/api/rooms/${roomId}/messages`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Sohbet geçmişi alınamadı.');
+            const history: ChatMessage[] = await response.json();
+            if (isComponentMounted) setMessages(history);
+
+            await signalrService.connect(token);
+            if (!isComponentMounted) return;
+
+            signalrService.on('existingParticipants', onExistingParticipants);
+            signalrService.on('userJoined', onUserJoined);
+            signalrService.on('userLeft', onUserLeft);
+            signalrService.on('receiveMessage', onReceiveMessage);
+            
+            webRtcService.initializeSignaling(async (callerId: string) => {
+                if (!isComponentMounted || peerUserIdRef.current) return;
+                await setupWebRTCConnection(callerId, false);
+            });
+
+            await signalrService.invoke('joinRoom', roomId);
+
+        } catch (err) {
+            console.error("Sayfa başlatılırken hata oluştu:", err);
+            if(isComponentMounted) setError(err instanceof Error ? err.message : 'Odaya bağlanırken bir hata oluştu.');
+        } finally {
+            if(isComponentMounted) setIsLoading(false);
         }
     }
 
     initializePage();
 
     return () => {
-      console.log("RoomPage useEffect cleanup: Unmount");
       isComponentMounted = false;
       handleHangUp();
-
       signalrService.off('ExistingParticipants');
       signalrService.off('UserJoined');
       signalrService.off('UserLeft');
       signalrService.off('ReceiveMessage');
       webRtcService.cleanupSignaling();
-
       if (signalrService.isConnected()) {
-        signalrService.invoke('LeaveRoom', roomId).catch(err => console.error("Error leaving room:", err));
+        signalrService.invoke('leaveRoom', roomId).catch(err => console.error("Odadan ayrılırken hata:", err));
       }
       signalrService.disconnect();
+      console.log("RoomPage temizlendi: Component ayrıldı");
     };
   }, [roomId, user, token, handleHangUp, setupWebRTCConnection]);
 
@@ -214,54 +209,72 @@ const RoomPage: React.FC = () => {
     e.preventDefault();
     if (newMessage.trim() === '') return;
     try {
-      await signalrService.invoke('SendMessage', newMessage);
+      await signalrService.invoke('sendMessage', newMessage);
       setNewMessage('');
     } catch (error) {
       console.error('Mesaj gönderilemedi:', error);
     }
   };
 
+
+  if (isLoading) {
+    return <div className="loading-overlay"><h1>Oda Yükleniyor...</h1></div>;
+  }
+
+  if (error) {
+    return <div className="error-overlay"><h1>Hata</h1><p>{error}</p></div>;
+  }
+
   return (
-    <div className="room-page-layout">
+    <div className={`room-page-layout ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
       <main className="main-content-area">
         <div className="video-player-wrapper">
           <video ref={remoteVideoRef} className="remote-video" autoPlay playsInline />
           <video ref={localVideoRef} className="local-video-pip" autoPlay playsInline muted />
           {!isCallActive && (
             <div className="video-placeholder">
-              <p>Görüşmeyi başlatmak için katılımcılar listesinden birini arayın.</p>
+              <h2>Görüşmeye Hoş Geldiniz!</h2>
+              <p>Başlamak için sağdaki listeden bir katılımcıyı arayın.</p>
             </div>
           )}
         </div>
 
         {isCallActive && (
             <div className="room-controls">
-                <button className="control-btn" onClick={handleToggleAudio}>
+                <button className="control-btn" onClick={handleToggleAudio} title={isAudioEnabled ? "Mikrofonu Kapat" : "Mikrofonu Aç"}>
                     {isAudioEnabled ? <FaMicrophone /> : <FaMicrophoneSlash />}
+                    <span>{isAudioEnabled ? "Sessize Al" : "Sesi Aç"}</span>
                 </button>
-                <button className="control-btn" onClick={handleToggleVideo}>
+                <button className="control-btn" onClick={handleToggleVideo} title={isVideoEnabled ? "Kamerayı Kapat" : "Kamerayı Aç"}>
                     {isVideoEnabled ? <FaVideo /> : <FaVideoSlash />}
+                    <span>{isVideoEnabled ? "Durdur" : "Başlat"}</span>
                 </button>
-                <button className="control-btn hang-up" onClick={handleHangUp}>
+                <button className="control-btn hang-up" onClick={handleHangUp} title="Görüşmeyi Sonlandır">
                     <FaPhoneSlash />
+                    <span>Bitir</span>
                 </button>
             </div>
         )}
       </main>
 
       <aside className="sidebar-area">
+        <div className="sidebar-header">
+           <h3 className="sidebar-title">{activeTab === 'participants' ? 'Katılımcılar' : 'Sohbet'}</h3>
+        </div>
         <div className="sidebar-tabs">
           <button 
             className={`tab-btn ${activeTab === 'participants' ? 'active' : ''}`}
             onClick={() => setActiveTab('participants')}
+            title="Katılımcı listesini göster"
           >
-            <FaUsers /> Katılımcılar
+            <FaUsers /> <span>Katılımcılar</span>
           </button>
           <button 
             className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`}
             onClick={() => setActiveTab('chat')}
+            title="Sohbet penceresini göster"
           >
-            <FaComment /> Sohbet
+            <FaComment /> <span>Sohbet</span>
           </button>
         </div>
         <div className="sidebar-content">
@@ -283,6 +296,14 @@ const RoomPage: React.FC = () => {
           )}
         </div>
       </aside>
+      
+      <button 
+        className="sidebar-toggle-btn" 
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        title={isSidebarOpen ? "Paneli Gizle" : "Paneli Göster"}
+      >
+        {isSidebarOpen ? <FaChevronRight /> : <FaChevronLeft />}
+      </button>
     </div>
   );
 };
