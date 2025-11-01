@@ -1,42 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from './ChatBotMessageInput.module.css';
 
-// Bu bileşen dışarıdan bir fonksiyon alacak: onSendMessage
-// Bu fonksiyon, yeni mesaj gönderildiğinde çağrılacak.
 interface MessageInputProps {
   onSendMessage: (messageText: string) => void;
 }
 
-const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
-  // Kullanıcının girdiği metni tutmak için bir state oluşturuyoruz.
+const ChatBotMessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
   const [inputValue, setInputValue] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Mesaj gönderme işlemini yöneten fonksiyon
   const handleSend = () => {
-    // Boş mesajların gönderilmesini engelliyoruz
     if (inputValue.trim()) {
       onSendMessage(inputValue);
-      setInputValue(''); // Gönderdikten sonra input alanını temizliyoruz
+      setInputValue('');
     }
   };
 
-  // Klavyedeki tuş basımlarını dinleyen fonksiyon
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    // Eğer basılan tuş "Enter" ise mesajı gönder
-    if (event.key === 'Enter') {
+  // Metin alanının yüksekliğini içeriğe göre ayarlar
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'; // Yüksekliği sıfırla
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // İçerik yüksekliğine ayarla
+    }
+  }, [inputValue]);
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Shift tuşuna basılı değilken Enter'a basılırsa gönder
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault(); // Enter'ın varsayılan "yeni satır" eylemini engelle
       handleSend();
     }
   };
 
   return (
-    <div className={styles.inputContainer}>
-      <input
-        type="text"
-        className={styles.textInput}
+    <div className={styles.ChatBotMessageInput}>
+      <textarea
+        ref={textareaRef}
+        className={styles.textAreaInput} // Sınıf adı değişti
         placeholder="Bir mesaj yazın..."
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        onKeyPress={handleKeyPress}
+        onKeyDown={handleKeyPress} // onKeyPress yerine onKeyDown kullanmak daha güvenilir
+        rows={1} // Başlangıçta tek satır
       />
       <button className={styles.sendButton} onClick={handleSend}>
         Gönder
@@ -45,4 +50,4 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
   );
 };
 
-export default MessageInput;
+export default ChatBotMessageInput;

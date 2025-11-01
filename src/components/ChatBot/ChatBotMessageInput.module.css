@@ -1,33 +1,42 @@
-.inputContainer {
+.ChatBotMessageInput {
   display: flex;
   padding: 10px;
-  background-color: #f1f1f1;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #e0e0e0;
+  background-color: #fff;
+  align-items: flex-end; /* Butonun textarea ile alttan hizalanmasını sağlar */
 }
 
-.textInput {
-  flex-grow: 1; /* Alanın çoğunu kaplamasını sağlar */
-  padding: 10px;
+/* YENİ: textInput sınıfı textAreaInput olarak güncellendi ve textarea için optimize edildi */
+.textAreaInput {
+  flex-grow: 1;
+  padding: 10px 15px;
   border: 1px solid #ccc;
   border-radius: 20px;
   margin-right: 10px;
-  font-size: 16px;
-  outline: none; /* Tıklandığında çıkan dış çerçeveyi kaldırır */
+  font-size: 14px;
+  font-family: inherit; /* Sayfanın genel fontunu kullanır */
+  outline: none;
+  resize: none; /* Kullanıcının manuel boyutlandırmasını engeller */
+  overflow-y: hidden; /* Gereksiz scrollbar'ı gizler */
+  min-height: 22px; /* padding ile uyumlu başlangıç yüksekliği */
+  max-height: 120px; /* Çok uzun mesajlarda scrollbar çıkması için limit */
 }
 
-.textInput:focus {
-  border-color: #007bff; /* Seçiliyken kenarlık rengini değiştirir */
+.textAreaInput:focus {
+  border-color: #007bff;
 }
 
 .sendButton {
   padding: 10px 20px;
+  height: 44px; /* Textarea'nın başlangıç yüksekliğiyle eşleşir */
+  border: none;
   background-color: #007bff;
   color: white;
-  border: none;
-  border-radius: 20px;
+  border-radius: 22px;
   cursor: pointer;
-  font-size: 16px;
+  font-weight: bold;
   transition: background-color 0.2s;
+  flex-shrink: 0; /* Küçülmesini engeller */
 }
 
 .sendButton:hover {

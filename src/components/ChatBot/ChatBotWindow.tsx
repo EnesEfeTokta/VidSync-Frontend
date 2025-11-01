@@ -1,43 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { Message } from '../../types/ChatBotMessage';
-import MessageBubble from './ChatBotMessageBubble';
-import MessageInput from './ChatBotMessageInput';
+import ChatBotMessageBubble from './ChatBotMessageBubble';
+import ChatBotMessageInput from './ChatBotMessageInput';
 import styles from './ChatBotWindow.module.css';
 
-// YENİ: Başlangıç mesajını bir değişkene alalım, tekrar kullanacağız.
 const initialMessage: Message[] = [
   { id: 1, text: 'Merhaba! Size nasıl yardımcı olabilirim?', sender: 'bot' }
 ];
 
-const ChatWindow: React.FC = () => {
-
-  // DEĞİŞTİ: useState'in başlangıç değeri artık localStorage'dan geliyor.
-  // Bu "lazy initial state" yöntemidir. Bu fonksiyon sadece ilk render'da çalışır.
+const ChatBotWindow: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>(() => {
     try {
-      const savedMessages = localStorage.getItem('chat_messages');
-      // Eğer kayıtlı mesaj varsa, onu parse edip döndür.
+      const savedMessages = localStorage.getItem('chat_bot_messages');
       return savedMessages ? JSON.parse(savedMessages) : initialMessage;
     } catch (error) {
-      console.error("Mesajlar yüklenirken hata oluştu:", error);
-      // Hata durumunda varsayılan mesajı döndür.
+      console.error("Bot mesajları yüklenirken hata oluştu:", error);
       return initialMessage;
     }
   });
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  // DEĞİŞTİ: Bu useEffect artık iki iş yapıyor:
-  // 1. Yeni mesaj geldiğinde en alta kaydırıyor.
-  // 2. Mesaj listesinin son halini localStorage'a kaydediyor.
   useEffect(() => {
-    scrollToBottom();
-    // messages state'i her değiştiğinde, güncel halini string'e çevirip kaydet.
-    localStorage.setItem('chat_messages', JSON.stringify(messages));
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    localStorage.setItem('chat_bot_messages', JSON.stringify(messages));
   }, [messages]);
 
   const handleSendMessage = (text: string) => {
@@ -59,33 +45,20 @@ const ChatWindow: React.FC = () => {
     }, 1000);
   };
 
-  // YENİ: Sohbeti temizleme fonksiyonu
-  const handleClearChat = () => {
-    // Önce localStorage'daki kaydı temizle
-    localStorage.removeItem('chat_messages');
-    // Sonra state'i başlangıç durumuna geri getir
-    setMessages(initialMessage);
-  };
-
   return (
-    <div className={styles.chatWindow}>
-      {/* YENİ: Başlık ve Temizle Butonunun olduğu header */}
+    <div className={styles.ChatBotWindow}>
       <div className={styles.chatHeader}>
-        <h3>Yardımcı Bot</h3>
-        <button onClick={handleClearChat} className={styles.clearButton}>
-          Sohbeti Temizle
-        </button>
+        Yardımcı Bot
       </div>
-
       <div className={styles.messagesContainer}>
         {messages.map(message => (
-          <MessageBubble key={message.id} message={message} />
+          <ChatBotMessageBubble key={message.id} message={message} />
         ))}
         <div ref={messagesEndRef} />
       </div>
-      <MessageInput onSendMessage={handleSendMessage} />
+      <ChatBotMessageInput onSendMessage={handleSendMessage} />
     </div>
   );
 };
 
-export default ChatWindow;
+export default ChatBotWindow;
