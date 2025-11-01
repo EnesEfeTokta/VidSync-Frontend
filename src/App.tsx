@@ -1,12 +1,7 @@
-// src/App.tsx
 import { Routes, Route } from "react-router-dom";
-
-// Bileşen (Component) importları
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import ChatWidget from "./components/ChatBot/ChatWidget"; // <-- 1. YENİ EKLENEN SATIR
-
-// Sayfa (Page) importları
+import ChatWidget from "./components/ChatBot/ChatBotWidget";
 import Home from "./pages/HomePage/HomePage";
 import About from "./pages/AboutPage/AboutPage";
 import Pricing from "./pages/PricingPage/PricingPage";
@@ -16,9 +11,6 @@ import DashboardPage from './pages/DashboardPage/DashboardPage';
 import FAQ from "./pages/FAQPage/FAQPage";
 import Contact from "./pages/ContactPage/ContactPage";
 import RoomPage from './pages/RoomPage/RoomPage';
-// ChatBotPage artık kullanılmıyor, bu yüzden importunu sildik.
-
-// Context ve Global Stil importları
 import { ThemeProvider } from "./context/ThemeContext";
 import "./App.css";
 

@@ -1,19 +1,14 @@
-/* ==========================================================================
-   RoomPageStyles.css - Geliştirilmiş ve Birleştirilmiş Sürüm
-   ========================================================================== */
-
-/* --- Ana Layout --- */
 .room-page-layout {
   display: grid;
-  grid-template-columns: 1fr 350px; /* Ana içerik ve 350px'lik sidebar */
-  height: calc(100vh - 60px); /* Navbar yüksekliği varsayılarak */
+  grid-template-columns: 1fr 350px;
+  height: calc(100vh - 60px);
   width: 100%;
   overflow: hidden;
   transition: grid-template-columns 0.3s ease-in-out;
 }
 
 .room-page-layout.sidebar-closed {
-  grid-template-columns: 1fr 0px; /* Sidebar kapalıyken genişliğini sıfırla */
+  grid-template-columns: 1fr 0px;
 }
 
 .main-content-area {
@@ -24,7 +19,6 @@
   background-color: #121212;
 }
 
-/* --- Video Alanı --- */
 .video-player-wrapper {
   flex-grow: 1;
   position: relative;
@@ -42,7 +36,7 @@
 
 .local-video-pip {
   position: absolute;
-  bottom: 85px; /* Kontrollerin üstünde kalması için */
+  bottom: 85px;
   right: 25px;
   width: 180px;
   height: 180px;
@@ -79,7 +73,6 @@
   color: #ccc;
 }
 
-/* --- Oda Kontrolleri --- */
 .room-controls {
   position: absolute;
   bottom: 20px;
@@ -139,7 +132,6 @@
   color: white;
 }
 
-/* --- Yan Panel (Sidebar) Genel --- */
 .sidebar-area {
   width: 350px;
   background-color: #1a1c1e;
@@ -193,7 +185,7 @@
 
 .sidebar-content {
   flex-grow: 1;
-  overflow: hidden; /* İçerideki bileşenlerin taşmasını engeller */
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -226,7 +218,6 @@
   right: 0px;
 }
 
-/* --- Katılımcılar Listesi --- */
 .participant-list {
   display: flex;
   flex-direction: column;
@@ -309,7 +300,6 @@
   opacity: 0.6;
 }
 
-/* --- Modern Sohbet Penceresi --- */
 .chat-window-container {
   display: flex;
   flex-direction: column;

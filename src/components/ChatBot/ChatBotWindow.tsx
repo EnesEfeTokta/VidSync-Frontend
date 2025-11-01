@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import type { Message } from './types';
-import MessageBubble from './MessageBubble';
-import MessageInput from './MessageInput';
-import styles from './ChatWindow.module.css';
+import type { Message } from '../../types/ChatBotMessage';
+import MessageBubble from './ChatBotMessageBubble';
+import MessageInput from './ChatBotMessageInput';
+import styles from './ChatBotWindow.module.css';
 
 // YENİ: Başlangıç mesajını bir değişkene alalım, tekrar kullanacağız.
 const initialMessage: Message[] = [

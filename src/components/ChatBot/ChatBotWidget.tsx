@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import ChatWindow from './ChatWindow'; // Daha önce oluşturduğumuz ana pencere
-import styles from './ChatWidget.module.css';
+import ChatWindow from './ChatBotWindow'; // Daha önce oluşturduğumuz ana pencere
+import styles from './ChatBotWidget.module.css';
 
 // Basit bir sohbet ikonu (SVG olarak)
 const ChatIcon = () => (

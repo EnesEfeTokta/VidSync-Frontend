@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './MessageInput.module.css';
+import styles from './ChatBotMessageInput.module.css';
 
 // Bu bileşen dışarıdan bir fonksiyon alacak: onSendMessage
 // Bu fonksiyon, yeni mesaj gönderildiğinde çağrılacak.

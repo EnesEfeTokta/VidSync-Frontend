@@ -1,6 +1,6 @@
 import React from 'react';
-import type { Message } from './types'; // 1. Adımda oluşturduğumuz tipi import ediyoruz
-import styles from './MessageBubble.module.css'; // Stil dosyamızı import ediyoruz
+import type { Message } from '../../types/ChatBotMessage'; // 1. Adımda oluşturduğumuz tipi import ediyoruz
+import styles from './ChatBotMessageBubble.module.css'; // Stil dosyamızı import ediyoruz
 
 // Bileşenin alacağı prop'ların tipini tanımlıyoruz
 interface MessageBubbleProps {
