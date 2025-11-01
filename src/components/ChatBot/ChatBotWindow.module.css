@@ -1,0 +1,27 @@
+.ChatBotWindow {
+  width: 350px;
+  height: 500px;
+  background-color: #fff;
+  border-radius: 15px; /* Köşeleri biraz daha yumuşattık */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* YENİ: Hafif bir kenarlık ekledik */
+  border: 1px solid rgba(0, 0, 0, 0.1); 
+}
+
+.chatHeader {
+  background-color: #007bff;
+  color: white;
+  padding: 15px;
+  font-weight: bold;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.messagesContainer {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 10px;
+  background-color: #f4f7f9;
+}

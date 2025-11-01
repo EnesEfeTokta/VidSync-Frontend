@@ -48,13 +48,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
             key={msg.id}
             className={`message-item ${msg.senderId === currentUserId ? 'my-message' : 'other-message'}`}
           >
-            {/* Mesaj baloncuğu artık tüm bilgileri içinde barındırıyor */}
             <div className="message-bubble">
-              {/* Sadece başkasının mesajında gönderen adını gösteriyoruz */}
               {msg.senderId !== currentUserId && (
                 <div className="message-sender">{msg.senderName}</div>
               )}
-              {/* Mesaj içeriği ve zaman damgası için bir sarmalayıcı */}
               <div className="message-content-wrapper">
                 <span className="message-content">{msg.content}</span>
                 <span className="message-timestamp">{formatTime(msg.sentAt)}</span>

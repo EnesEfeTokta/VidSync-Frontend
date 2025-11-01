@@ -1,0 +1,32 @@
+.ChatBotMessageBubble {
+  display: flex;
+  margin: 10px 0;
+  padding: 0 10px;
+}
+
+.bubble {
+  max-width: 80%;
+  padding: 10px 15px;
+  border-radius: 20px;
+  color: white;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+.user {
+  justify-content: flex-end;
+}
+
+.user .bubble {
+  background-color: #007bff;
+  border-bottom-right-radius: 5px;
+}
+
+.bot {
+  justify-content: flex-start;
+}
+
+.bot .bubble {
+  background-color: #6c757d;
+  border-bottom-left-radius: 5px;
+}

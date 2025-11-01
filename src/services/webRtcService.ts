@@ -87,7 +87,6 @@ const createPeerConnection = (onStreamReceived: (stream: MediaStream) => void, t
   };
 
   peerConnection.onconnectionstatechange = () => {
-    console.log("Connection state changed:", peerConnection?.connectionState);
     if (peerConnection?.connectionState === 'failed') {
       peerConnection?.restartIce();
     }
@@ -164,21 +163,19 @@ const processIceCandidateQueue = async () => {
 };
 
 const cleanupSignaling = () => {
-  signalrService.off('ReceiveOffer');
-  signalrService.off('ReceiveAnswer');
-  signalrService.off('ReceiveIceCandidate');
-  console.log("WebRTC signaling listeners removed.");
+  signalrService.off('receiveOffer');
+  signalrService.off('receiveAnswer');
+  signalrService.off('receiveIceCandidate');
 };
 
 const initializeSignaling = (createPeerConnectionForOffer: (callerId: string) => Promise<void>) => {
   cleanupSignaling();
-  signalrService.on('ReceiveOffer', async (callerId: string, serializedOffer: string) => {
+  signalrService.on('receiveOffer', async (callerId: string, serializedOffer: string) => {
     await createPeerConnectionForOffer(callerId);
     await handleReceivedOffer(callerId, serializedOffer);
   });
-  signalrService.on('ReceiveAnswer', handleReceivedAnswer);
-  signalrService.on('ReceiveIceCandidate', handleReceivedIceCandidate);
-  console.log("WebRTC signaling listeners initialized.");
+  signalrService.on('receiveAnswer', handleReceivedAnswer);
+  signalrService.on('receiveIceCandidate', handleReceivedIceCandidate);
 };
 
 const closeConnection = () => {

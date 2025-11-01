@@ -46,7 +46,6 @@ const RoomPage: React.FC = () => {
     peerUserIdRef.current = null;
     setIsAudioEnabled(true);
     setIsVideoEnabled(true);
-    console.log("Arama sonlandırıldı ve akışlar temizlendi.");
   }, []);
 
   const setupWebRTCConnection = useCallback(async (targetUserId: string, isInitiator: boolean) => {
@@ -54,12 +53,10 @@ const RoomPage: React.FC = () => {
       console.error("Hedef kullanıcı ID'si tanımsız.");
       return;
     }
-    console.log(`${targetUserId} kullanıcısı ile WebRTC bağlantısı kuruluyor. Başlatan: ${isInitiator}`);
     try {
       const localStream = await webRtcService.startLocalStream();
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = localStream;
-        console.log("Yerel akış video elementine eklendi.");
       }
       setIsCallActive(true);
       peerUserIdRef.current = targetUserId;
@@ -72,24 +69,17 @@ const RoomPage: React.FC = () => {
             return;
         }
         const videoElement = remoteVideoRef.current;
-        console.log(`handleRemoteStream çağrıldı. Uzak akış ID: ${stream.id}. Video elementi mevcut mu: ${!!videoElement}`);
         if (videoElement) {
           if (videoElement.srcObject !== stream) {
-            console.log("Video elementinin srcObject'i yeni uzak akış ile güncelleniyor.");
             videoElement.srcObject = stream;
             
             const playPromise = videoElement.play();
             if (playPromise !== undefined) {
               playPromise.catch(error => {
                 console.error("Uzak video otomatik oynatılamadı. Tarayıcı engellemiş olabilir.", error);
-                alert("Karşı tarafın videosu tarayıcı kısıtlamaları nedeniyle otomatik başlatılamadı. Videoyu başlatmak için ekrana tıklamanız gerekebilir.");
               });
             }
-          } else {
-            console.log("Gelen uzak akış zaten video elementine atanmış. İşlem yapılmadı.");
           }
-        } else {
-            console.error("Uzak akış alındı ancak remoteVideoRef.current mevcut değil! React render döngüsüyle ilgili bir sorun olabilir.");
         }
       };
 
@@ -108,7 +98,6 @@ const RoomPage: React.FC = () => {
     if (!roomId || !user || !token) return;
 
     let isComponentMounted = true;
-    console.log("RoomPage useEffect tetiklendi: Component bağlandı");
 
     const onExistingParticipants = (existingUsers: Participant[]) => {
       if (!isComponentMounted) return;
@@ -160,7 +149,6 @@ const RoomPage: React.FC = () => {
             await signalrService.invoke('joinRoom', roomId);
 
         } catch (err) {
-            console.error("Sayfa başlatılırken hata oluştu:", err);
             if(isComponentMounted) setError(err instanceof Error ? err.message : 'Odaya bağlanırken bir hata oluştu.');
         } finally {
             if(isComponentMounted) setIsLoading(false);
@@ -172,16 +160,15 @@ const RoomPage: React.FC = () => {
     return () => {
       isComponentMounted = false;
       handleHangUp();
-      signalrService.off('ExistingParticipants');
-      signalrService.off('UserJoined');
-      signalrService.off('UserLeft');
-      signalrService.off('ReceiveMessage');
+      signalrService.off('existingParticipants');
+      signalrService.off('userJoined');
+      signalrService.off('userLeft');
+      signalrService.off('receiveMessage');
       webRtcService.cleanupSignaling();
       if (signalrService.isConnected()) {
         signalrService.invoke('leaveRoom', roomId).catch(err => console.error("Odadan ayrılırken hata:", err));
       }
       signalrService.disconnect();
-      console.log("RoomPage temizlendi: Component ayrıldı");
     };
   }, [roomId, user, token, handleHangUp, setupWebRTCConnection]);
 
@@ -215,7 +202,6 @@ const RoomPage: React.FC = () => {
       console.error('Mesaj gönderilemedi:', error);
     }
   };
-
 
   if (isLoading) {
     return <div className="loading-overlay"><h1>Oda Yükleniyor...</h1></div>;

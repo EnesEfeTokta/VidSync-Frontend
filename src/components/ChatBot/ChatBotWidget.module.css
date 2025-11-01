@@ -1,0 +1,58 @@
+.ChatBotWidget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.chatPopup {
+  /* YENİ: Bu elemanı z-index hiyerarşisine dahil ediyoruz */
+  position: relative;
+  z-index: 1001;
+
+  transform-origin: bottom right;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  margin-bottom: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); 
+  border-radius: 15px;
+}
+
+.closed {
+  transform: scale(0.8) translateY(20px);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.open {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+.chatToggleButton {
+  /* YENİ: Bu elemanı da z-index hiyerarşisine dahil ediyoruz */
+  position: relative;
+  z-index: 1002; /* Butonun her zaman en üstte kalmasını sağlar */
+
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.chatToggleButton:hover {
+  background-color: #0056b3;
+  transform: scale(1.1);
+}
