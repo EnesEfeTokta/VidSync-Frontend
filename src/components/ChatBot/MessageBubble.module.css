@@ -1,0 +1,34 @@
+.bubbleContainer {
+  display: flex;
+  margin: 10px 0;
+  padding: 0 10px;
+}
+
+.bubble {
+  max-width: 70%;
+  padding: 10px 15px;
+  border-radius: 20px;
+  color: white;
+  word-wrap: break-word; /* Uzun kelimelerin balon dışına taşmasını engeller */
+}
+
+/* Kullanıcı Mesajı Stilleri */
+.user {
+  justify-content: flex-end; /* Konteyneri sağa yaslar */
+}
+
+.user .bubble {
+  background-color: #007bff; /* Mavi renk */
+  border-bottom-right-radius: 5px;
+}
+
+/* Bot Mesajı Stilleri */
+.bot {
+  justify-content: flex-start; /* Konteyneri sola yaslar */
+}
+
+.bot .bubble {
+  background-color: #6c757d; /* Gri renk */
+  color: white;
+  border-bottom-left-radius: 5px;
+}

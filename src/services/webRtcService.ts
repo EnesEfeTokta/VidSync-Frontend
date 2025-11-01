@@ -72,15 +72,15 @@ const createPeerConnection = (onStreamReceived: (stream: MediaStream) => void, t
     event.streams[0].getTracks().forEach(track => {
       remoteStream!.addTrack(track);
     });
-    if (onRemoteStreamCallback) {
-      onRemoteStreamCallback(remoteStream!);
+    if (onRemoteStreamCallback && remoteStream) {
+      onRemoteStreamCallback(remoteStream);
     }
   };
 
   peerConnection.onicecandidate = (event) => {
     if (event.candidate) {
       const serializedCandidate = serializeIceCandidate(event.candidate);
-      signalrService.invoke('SendIceCandidate', targetUserId, serializedCandidate).catch(error => {
+      signalrService.invoke('sendIceCandidate', targetUserId, serializedCandidate).catch(error => {
         console.error("Error sending ICE candidate:", error);
       });
     }
@@ -106,7 +106,7 @@ const createOffer = async (targetUserId: string) => {
     const offer = await peerConnection.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
     await peerConnection.setLocalDescription(offer);
     const serializedOffer = serializeSdp(offer);
-    await signalrService.invoke('SendOffer', targetUserId, serializedOffer);
+    await signalrService.invoke('sendOffer', targetUserId, serializedOffer);
   } catch (error) {
     console.error("Error creating offer:", error);
   }
@@ -120,7 +120,7 @@ const handleReceivedOffer = async (callerId: string, serializedOffer: string) =>
     const answer = await peerConnection.createAnswer();
     await peerConnection.setLocalDescription(answer);
     const serializedAnswer = serializeSdp(answer);
-    await signalrService.invoke('SendAnswer', callerId, serializedAnswer);
+    await signalrService.invoke('sendAnswer', callerId, serializedAnswer);
     await processIceCandidateQueue();
   } catch (error) {
     console.error("Error handling received offer:", error);

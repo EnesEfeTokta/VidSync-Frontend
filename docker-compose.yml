@@ -11,7 +11,7 @@ services:
 
   cloudflared:
     image: cloudflare/cloudflared:latest
-    container_name: vidsync_cloudflared
+    container_name: vidsync_tunnel
     restart: unless-stopped
     command: tunnel run --token ${CLOUDFLARE_TUNNEL_TOKEN}
     depends_on:
