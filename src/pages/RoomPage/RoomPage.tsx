@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { signalrService } from '../../services/signalrService';
 import { useAuth } from '../../context/AuthContext';
 import { webRtcService } from '../../services/webRtcService';
+import { roomService } from '../../services/roomService';
 import ParticipantList from '../../components/ParticipantList';
 import ChatWindow from '../../components/ChatWindow';
 
@@ -10,7 +11,8 @@ import {
   FaMicrophone, FaMicrophoneSlash, 
   FaVideo, FaVideoSlash, 
   FaPhoneSlash, FaUsers, FaComment,
-  FaChevronRight, FaChevronLeft
+  FaChevronRight, FaChevronLeft,
+  FaFileAlt
 } from 'react-icons/fa';
 
 import './RoomPageStyles.css';
@@ -33,6 +35,7 @@ const RoomPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'participants' | 'chat'>('participants');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSummarizing, setIsSummarizing] = useState(false);
 
   const peerUserIdRef = useRef<string | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -65,21 +68,12 @@ const RoomPage: React.FC = () => {
 
       const handleRemoteStream = (stream: MediaStream) => {
         if (!stream || !stream.active || stream.getTracks().length === 0) {
-            console.warn("handleRemoteStream çağrıldı ancak geçersiz veya boş bir akış alındı.");
             return;
         }
         const videoElement = remoteVideoRef.current;
-        if (videoElement) {
-          if (videoElement.srcObject !== stream) {
-            videoElement.srcObject = stream;
-            
-            const playPromise = videoElement.play();
-            if (playPromise !== undefined) {
-              playPromise.catch(error => {
-                console.error("Uzak video otomatik oynatılamadı. Tarayıcı engellemiş olabilir.", error);
-              });
-            }
-          }
+        if (videoElement && videoElement.srcObject !== stream) {
+          videoElement.srcObject = stream;
+          videoElement.play().catch(err => console.error("Uzak video oynatılamadı:", err));
         }
       };
 
@@ -87,38 +81,33 @@ const RoomPage: React.FC = () => {
       if (isInitiator) {
         await webRtcService.createOffer(targetUserId);
       }
-    } catch (error) {
-      console.error("WebRTC kurulumu başarısız oldu", error);
-      alert(`WebRTC kurulumunda hata: ${error instanceof Error ? error.message : "Bilinmeyen bir hata."}`);
+    } catch (err) {
+      console.error("WebRTC kurulumu başarısız oldu", err);
       handleHangUp();
     }
   }, [handleHangUp]);
   
   useEffect(() => {
     if (!roomId || !user || !token) return;
-
     let isComponentMounted = true;
 
     const onExistingParticipants = (existingUsers: Participant[]) => {
-      if (!isComponentMounted) return;
-      const currentUser = { id: user.id, firstName: user.firstName };
-      setParticipants([currentUser, ...existingUsers.filter(p => p.id !== user.id)]);
+      if (isComponentMounted) setParticipants([{ id: user.id, firstName: user.firstName }, ...existingUsers.filter(p => p.id !== user.id)]);
     };
     const onUserJoined = (joinedUser: Participant) => {
-      if (!isComponentMounted) return;
-      setParticipants(prev => prev.find(p => p.id === joinedUser.id) ? prev : [...prev, joinedUser]);
+      if (isComponentMounted) setParticipants(prev => prev.find(p => p.id === joinedUser.id) ? prev : [...prev, joinedUser]);
     };
     const onUserLeft = (leftUserId: string) => {
-      if (!isComponentMounted) return;
-      setParticipants(prev => prev.filter(p => p.id !== leftUserId));
-      if (peerUserIdRef.current === leftUserId) {
-        alert("Görüşmedeki kişi odadan ayrıldı.");
-        handleHangUp();
+      if (isComponentMounted) {
+        setParticipants(prev => prev.filter(p => p.id !== leftUserId));
+        if (peerUserIdRef.current === leftUserId) {
+          alert("Görüşmedeki kişi odadan ayrıldı.");
+          handleHangUp();
+        }
       }
     };
     const onReceiveMessage = (newMessage: ChatMessage) => {
-      if (!isComponentMounted) return;
-      setMessages(prev => [...prev, newMessage]);
+      if (isComponentMounted) setMessages(prev => [...prev, newMessage]);
     };
 
     const initializePage = async () => {
@@ -142,8 +131,9 @@ const RoomPage: React.FC = () => {
             signalrService.on('receiveMessage', onReceiveMessage);
             
             webRtcService.initializeSignaling(async (callerId: string) => {
-                if (!isComponentMounted || peerUserIdRef.current) return;
-                await setupWebRTCConnection(callerId, false);
+                if (isComponentMounted && !peerUserIdRef.current) {
+                  await setupWebRTCConnection(callerId, false);
+                }
             });
 
             await signalrService.invoke('joinRoom', roomId);
@@ -173,10 +163,7 @@ const RoomPage: React.FC = () => {
   }, [roomId, user, token, handleHangUp, setupWebRTCConnection]);
 
   const handleCallUser = async (targetUserId: string) => {
-    if (isCallActive) {
-      alert("Zaten aktif bir arama var.");
-      return;
-    }
+    if (isCallActive) return;
     await setupWebRTCConnection(targetUserId, true);
   };
 
@@ -200,6 +187,20 @@ const RoomPage: React.FC = () => {
       setNewMessage('');
     } catch (error) {
       console.error('Mesaj gönderilemedi:', error);
+    }
+  };
+
+  const handleSendSummary = async () => {
+    if (isSummarizing || !roomId || !token) return;
+    setIsSummarizing(true);
+    try {
+      await roomService.sendMeetingSummary(roomId, token);
+      alert("Toplantı özeti başarıyla e-posta adresinize gönderiliyor.");
+    } catch (error) {
+      console.error("Özet gönderme hatası:", error);
+      alert(error instanceof Error ? error.message : 'Bilinmeyen bir hata oluştu.');
+    } finally {
+      setIsSummarizing(false);
     }
   };
 
@@ -235,9 +236,17 @@ const RoomPage: React.FC = () => {
                     {isVideoEnabled ? <FaVideo /> : <FaVideoSlash />}
                     <span>{isVideoEnabled ? "Durdur" : "Başlat"}</span>
                 </button>
+                <button
+                  className="control-btn"
+                  onClick={handleSendSummary}
+                  disabled={isSummarizing}
+                  title="Toplantı özetini e-postana gönder"
+                >
+                  <FaFileAlt />
+                  <span>{isSummarizing ? "Gönderiliyor..." : "Özet Gönder"}</span>
+                </button>
                 <button className="control-btn hang-up" onClick={handleHangUp} title="Görüşmeyi Sonlandır">
                     <FaPhoneSlash />
-                    <span>Bitir</span>
                 </button>
             </div>
         )}
