@@ -26,6 +26,30 @@ const createRoom = async (payload: CreateRoomPayload): Promise<Room> => {
     }
 };
 
+export const sendMeetingSummary = async (roomId: string, token: string): Promise<void> => {
+  if (!API_URL) {
+    throw new Error("API base URL is not configured in environment variables (VITE_API_URL).");
+  }
+
+  const response = await fetch(`${API_URL}/rooms/${roomId}/summarize`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    try {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `Sunucu hatası: ${response.status} ${response.statusText}`);
+    } catch {
+      throw new Error(`Özet gönderilemedi. Sunucu durumu: ${response.status} ${response.statusText}`);
+    }
+  }
+};
+
 export const roomService = {
     createRoom,
+    sendMeetingSummary,
 };
