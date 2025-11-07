@@ -53,7 +53,7 @@ const RoomPage: React.FC = () => {
 
   const setupWebRTCConnection = useCallback(async (targetUserId: string, isInitiator: boolean) => {
     if (!targetUserId) {
-      console.error("Hedef kullanıcı ID'si tanımsız.");
+      console.error("Target user ID is undefined.");
       return;
     }
     try {
@@ -73,7 +73,7 @@ const RoomPage: React.FC = () => {
         const videoElement = remoteVideoRef.current;
         if (videoElement && videoElement.srcObject !== stream) {
           videoElement.srcObject = stream;
-          videoElement.play().catch(err => console.error("Uzak video oynatılamadı:", err));
+          videoElement.play().catch(err => console.error("Remote video could not be played:", err));
         }
       };
 
@@ -82,7 +82,7 @@ const RoomPage: React.FC = () => {
         await webRtcService.createOffer(targetUserId);
       }
     } catch (err) {
-      console.error("WebRTC kurulumu başarısız oldu", err);
+      console.error("WebRTC setup failed", err);
       handleHangUp();
     }
   }, [handleHangUp]);
@@ -101,7 +101,7 @@ const RoomPage: React.FC = () => {
       if (isComponentMounted) {
         setParticipants(prev => prev.filter(p => p.id !== leftUserId));
         if (peerUserIdRef.current === leftUserId) {
-          alert("Görüşmedeki kişi odadan ayrıldı.");
+          alert("The person in the meeting has left the room.");
           handleHangUp();
         }
       }
@@ -118,7 +118,7 @@ const RoomPage: React.FC = () => {
             const response = await fetch(`${apiBaseUrl}/api/rooms/${roomId}/messages`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            if (!response.ok) throw new Error('Sohbet geçmişi alınamadı.');
+            if (!response.ok) throw new Error('Chat history could not be retrieved.');
             const history: ChatMessage[] = await response.json();
             if (isComponentMounted) setMessages(history);
 
@@ -195,21 +195,21 @@ const RoomPage: React.FC = () => {
     setIsSummarizing(true);
     try {
       await roomService.sendMeetingSummary(roomId, token);
-      alert("Toplantı özeti başarıyla e-posta adresinize gönderiliyor.");
+      alert("Meeting summary is being successfully sent to your email address.");
     } catch (error) {
-      console.error("Özet gönderme hatası:", error);
-      alert(error instanceof Error ? error.message : 'Bilinmeyen bir hata oluştu.');
+      console.error("Summary sending error:", error);
+      alert(error instanceof Error ? error.message : 'An unknown error occurred.');
     } finally {
       setIsSummarizing(false);
     }
   };
 
   if (isLoading) {
-    return <div className="loading-overlay"><h1>Oda Yükleniyor...</h1></div>;
+    return <div className="loading-overlay"><h1>Room is Loading...</h1></div>;
   }
 
   if (error) {
-    return <div className="error-overlay"><h1>Hata</h1><p>{error}</p></div>;
+    return <div className="error-overlay"><h1>Error</h1><p>{error}</p></div>;
   }
 
   return (
@@ -220,32 +220,32 @@ const RoomPage: React.FC = () => {
           <video ref={localVideoRef} className="local-video-pip" autoPlay playsInline muted />
           {!isCallActive && (
             <div className="video-placeholder">
-              <h2>Görüşmeye Hoş Geldiniz!</h2>
-              <p>Başlamak için sağdaki listeden bir katılımcıyı arayın.</p>
+              <h2>Welcome to the Meeting!</h2>
+              <p>To get started, call a participant from the list on the right.</p>
             </div>
           )}
         </div>
 
         {isCallActive && (
             <div className="room-controls">
-                <button className="control-btn" onClick={handleToggleAudio} title={isAudioEnabled ? "Mikrofonu Kapat" : "Mikrofonu Aç"}>
+                <button className="control-btn" onClick={handleToggleAudio} title={isAudioEnabled ? "Mute Microphone" : "Unmute Microphone"}>
                     {isAudioEnabled ? <FaMicrophone /> : <FaMicrophoneSlash />}
-                    <span>{isAudioEnabled ? "Sessize Al" : "Sesi Aç"}</span>
+                    <span>{isAudioEnabled ? "Mute" : "Unmute"}</span>
                 </button>
-                <button className="control-btn" onClick={handleToggleVideo} title={isVideoEnabled ? "Kamerayı Kapat" : "Kamerayı Aç"}>
+                <button className="control-btn" onClick={handleToggleVideo} title={isVideoEnabled ? "Turn Off Camera" : "Turn On Camera"}>
                     {isVideoEnabled ? <FaVideo /> : <FaVideoSlash />}
-                    <span>{isVideoEnabled ? "Durdur" : "Başlat"}</span>
+                    <span>{isVideoEnabled ? "Stop" : "Start"}</span>
                 </button>
                 <button
                   className="control-btn"
                   onClick={handleSendSummary}
                   disabled={isSummarizing}
-                  title="Toplantı özetini e-postana gönder"
+                  title="Send Meeting Summary to Your Email"
                 >
                   <FaFileAlt />
-                  <span>{isSummarizing ? "Gönderiliyor..." : "Özet Gönder"}</span>
+                  <span>{isSummarizing ? "Sending..." : "Send Summary"}</span>
                 </button>
-                <button className="control-btn hang-up" onClick={handleHangUp} title="Görüşmeyi Sonlandır">
+                <button className="control-btn hang-up" onClick={handleHangUp} title="End Call">
                     <FaPhoneSlash />
                 </button>
             </div>
@@ -254,22 +254,22 @@ const RoomPage: React.FC = () => {
 
       <aside className="sidebar-area">
         <div className="sidebar-header">
-           <h3 className="sidebar-title">{activeTab === 'participants' ? 'Katılımcılar' : 'Sohbet'}</h3>
+           <h3 className="sidebar-title">{activeTab === 'participants' ? 'Participants' : 'Chat'}</h3>
         </div>
         <div className="sidebar-tabs">
           <button 
             className={`tab-btn ${activeTab === 'participants' ? 'active' : ''}`}
             onClick={() => setActiveTab('participants')}
-            title="Katılımcı listesini göster"
+            title="Show Participants List"
           >
-            <FaUsers /> <span>Katılımcılar</span>
+            <FaUsers /> <span>Participants</span>
           </button>
           <button 
             className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`}
             onClick={() => setActiveTab('chat')}
-            title="Sohbet penceresini göster"
+            title="Show Chat Window"
           >
-            <FaComment /> <span>Sohbet</span>
+            <FaComment /> <span>Chat</span>
           </button>
         </div>
         <div className="sidebar-content">
@@ -295,7 +295,7 @@ const RoomPage: React.FC = () => {
       <button 
         className="sidebar-toggle-btn" 
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        title={isSidebarOpen ? "Paneli Gizle" : "Paneli Göster"}
+        title={isSidebarOpen ? "Hide Panel" : "Show Panel"}
       >
         {isSidebarOpen ? <FaChevronRight /> : <FaChevronLeft />}
       </button>

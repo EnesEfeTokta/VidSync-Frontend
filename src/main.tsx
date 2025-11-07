@@ -7,7 +7,6 @@ import { AuthProvider } from './context/AuthContext.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    {/* Uygulamayı BrowserRouter ile sarın */}
     <AuthProvider>
       <BrowserRouter>
         <App />

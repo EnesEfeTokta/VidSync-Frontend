@@ -1,23 +1,19 @@
-// src/pages/PricingPage.tsx
-
 import React from 'react';
 import "../../App.css";
-import './PricingPageStyles.css'; // Sayfaya özel stilleri import ediyoruz
+import './PricingPageStyles.css';
 import { FaCheck } from 'react-icons/fa';
 
-// Her bir fiyatlandırma planının yapısını tanımlayan bir arayüz (interface) oluşturalım.
 interface PricingPlan {
   title: string;
   subtitle: string;
   price: string;
   period: string;
   buttonText: string;
-  buttonType: 'primary' | 'secondary'; // Butonun stilini belirler
-  isPopular?: boolean; // Bu planın popüler olup olmadığını belirtir (isteğe bağlı)
-  features: string[]; // Planın özelliklerini bir dizi olarak tutar
+  buttonType: 'primary' | 'secondary';
+  isPopular?: boolean;
+  features: string[];
 }
 
-// Tüm fiyatlandırma planlarımızı tek bir veri dizisinde yönetelim.
 const pricingPlans: PricingPlan[] = [
   {
     title: 'Temel',
@@ -40,7 +36,7 @@ const pricingPlans: PricingPlan[] = [
     period: '/ay',
     buttonText: '14 Gün Ücretsiz Dene',
     buttonType: 'primary',
-    isPopular: true, // Bu kartın "En Popüler" rozetini göstermesini sağlar
+    isPopular: true,
     features: [
       'Her şey sınırsız (HD Video)',
       'Sınırsız Toplantı Odası',
@@ -53,7 +49,7 @@ const pricingPlans: PricingPlan[] = [
     title: 'Kurumsal',
     subtitle: 'Büyüyen organizasyonlar için',
     price: 'Teklif',
-    period: 'Alın', // CSS'te boşluk olmaması için düzenlendi
+    period: 'Alın',
     buttonText: 'Bizimle İletişime Geçin',
     buttonType: 'secondary',
     features: [
@@ -69,7 +65,6 @@ const pricingPlans: PricingPlan[] = [
 const PricingPage: React.FC = () => {
   return (
     <div className="pricing-page-container">
-      {/* Başlık ve Açıklama Alanı */}
       <header className="pricing-header">
         <h2>İhtiyacınıza Uygun Planı Seçin</h2>
         <p>
