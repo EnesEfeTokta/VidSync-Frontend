@@ -1,9 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './ChatBotMessageInput.module.css';
-
-interface MessageInputProps {
-  onSendMessage: (messageText: string) => void;
-}
+import type { MessageInputProps } from '../../types/MessageInputProps';
 
 const ChatBotMessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
   const [inputValue, setInputValue] = useState('');
@@ -16,18 +13,17 @@ const ChatBotMessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
     }
   };
 
-  // Metin alanının yüksekliğini içeriğe göre ayarlar
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'; // Yüksekliği sıfırla
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // İçerik yüksekliğine ayarla
+      textareaRef.current.style.height = 'auto'; 
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; 
     }
   }, [inputValue]);
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Shift tuşuna basılı değilken Enter'a basılırsa gönder
+    
     if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault(); // Enter'ın varsayılan "yeni satır" eylemini engelle
+      event.preventDefault();
       handleSend();
     }
   };
@@ -36,12 +32,12 @@ const ChatBotMessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
     <div className={styles.ChatBotMessageInput}>
       <textarea
         ref={textareaRef}
-        className={styles.textAreaInput} // Sınıf adı değişti
-        placeholder="Bir mesaj yazın..."
+        className={styles.textAreaInput} 
+        placeholder="Write a message..."
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        onKeyDown={handleKeyPress} // onKeyPress yerine onKeyDown kullanmak daha güvenilir
-        rows={1} // Başlangıçta tek satır
+        onKeyDown={handleKeyPress} 
+        rows={1} 
       />
       <button className={styles.sendButton} onClick={handleSend}>
         Gönder

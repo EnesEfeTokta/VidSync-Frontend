@@ -6,6 +6,8 @@ import { webRtcService } from '../../services/webRtcService';
 import { roomService } from '../../services/roomService';
 import ParticipantList from '../../components/ParticipantList';
 import ChatWindow from '../../components/ChatWindow';
+import type { Participant } from '../../types/Participant';
+import type { ChatMessage } from '../../types/ChatMessage';
 
 import { 
   FaMicrophone, FaMicrophoneSlash, 
@@ -16,9 +18,6 @@ import {
 } from 'react-icons/fa';
 
 import './RoomPageStyles.css';
-
-interface Participant { id: string; firstName: string; }
-interface ChatMessage { id: string; content: string; sentAt: string; senderId: string; senderName: string; roomId: string; }
 
 const RoomPage: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();

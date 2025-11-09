@@ -3,10 +3,9 @@
   padding: 10px;
   border-top: 1px solid #e0e0e0;
   background-color: #fff;
-  align-items: flex-end; /* Butonun textarea ile alttan hizalanmasını sağlar */
+  align-items: flex-end; 
 }
 
-/* YENİ: textInput sınıfı textAreaInput olarak güncellendi ve textarea için optimize edildi */
 .textAreaInput {
   flex-grow: 1;
   padding: 10px 15px;
@@ -14,12 +13,12 @@
   border-radius: 20px;
   margin-right: 10px;
   font-size: 14px;
-  font-family: inherit; /* Sayfanın genel fontunu kullanır */
+  font-family: inherit; 
   outline: none;
-  resize: none; /* Kullanıcının manuel boyutlandırmasını engeller */
-  overflow-y: hidden; /* Gereksiz scrollbar'ı gizler */
-  min-height: 22px; /* padding ile uyumlu başlangıç yüksekliği */
-  max-height: 120px; /* Çok uzun mesajlarda scrollbar çıkması için limit */
+  resize: none; 
+  overflow-y: hidden; 
+  min-height: 22px; 
+  max-height: 120px; 
 }
 
 .textAreaInput:focus {
@@ -28,7 +27,7 @@
 
 .sendButton {
   padding: 10px 20px;
-  height: 44px; /* Textarea'nın başlangıç yüksekliğiyle eşleşir */
+  height: 44px; 
   border: none;
   background-color: #007bff;
   color: white;
@@ -36,7 +35,7 @@
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.2s;
-  flex-shrink: 0; /* Küçülmesini engeller */
+  flex-shrink: 0; 
 }
 
 .sendButton:hover {

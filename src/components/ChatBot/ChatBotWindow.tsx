@@ -5,7 +5,7 @@ import ChatBotMessageInput from './ChatBotMessageInput';
 import styles from './ChatBotWindow.module.css';
 
 const initialMessage: Message[] = [
-  { id: 1, text: 'Merhaba! Size nasıl yardımcı olabilirim?', sender: 'bot' }
+  { id: 1, text: 'Hello! How can I help you?', sender: 'bot' }
 ];
 
 const ChatBotWindow: React.FC = () => {
@@ -14,7 +14,7 @@ const ChatBotWindow: React.FC = () => {
       const savedMessages = localStorage.getItem('chat_bot_messages');
       return savedMessages ? JSON.parse(savedMessages) : initialMessage;
     } catch (error) {
-      console.error("Bot mesajları yüklenirken hata oluştu:", error);
+      console.error("An error occurred while loading bot messages:", error);
       return initialMessage;
     }
   });
@@ -38,7 +38,7 @@ const ChatBotWindow: React.FC = () => {
     setTimeout(() => {
       const botResponse: Message = {
         id: Date.now() + 1,
-        text: `Mesajınızı aldım: "${text}"`,
+        text: `I received your message: "${text}"`,
         sender: 'bot',
       };
       setMessages(prevMessages => [...prevMessages, botResponse]);

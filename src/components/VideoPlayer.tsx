@@ -1,16 +1,5 @@
 import React from 'react';
-
-interface VideoPlayerProps {
-  localVideoRef: React.RefObject<HTMLVideoElement>;
-  remoteVideoRef: React.RefObject<HTMLVideoElement>;
-  isCallActive: boolean;
-  isAudioEnabled: boolean;
-  isVideoEnabled: boolean;
-  remoteUserFirstName?: string;
-  onToggleAudio: () => void;
-  onToggleVideo: () => void;
-  onHangUp: () => void;
-}
+import type { VideoPlayerProps } from '../types/VideoPlayerProps';
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({
   localVideoRef,
@@ -31,17 +20,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
           <video ref={localVideoRef} autoPlay muted playsInline />
         </div>
         <div className="video-wrapper">
-          <h3>{remoteUserFirstName || 'Diğer Kullanıcı'}</h3>
+          <h3>{remoteUserFirstName || 'Other User'}</h3>
           <video ref={remoteVideoRef} autoPlay playsInline />
         </div>
       </div>
       {isCallActive && (
         <div className="controls-container">
           <button onClick={onToggleAudio}>
-            {isAudioEnabled ? 'Sesi Kapat' : 'Sesi Aç'}
+            {isAudioEnabled ? 'Mute' : 'Turn Up the Volume'}
           </button>
           <button onClick={onToggleVideo}>
-            {isVideoEnabled ? 'Kamerayı Kapat' : 'Kamerayı Aç'}
+            {isVideoEnabled ? 'Turn off the camera' : 'Turn on the camera'}
           </button>
           <button onClick={onHangUp} style={{ backgroundColor: 'red' }}>
             Aramayı Sonlandır

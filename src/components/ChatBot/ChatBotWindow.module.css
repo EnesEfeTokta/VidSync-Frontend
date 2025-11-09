@@ -2,11 +2,11 @@
   width: 350px;
   height: 500px;
   background-color: #fff;
-  border-radius: 15px; /* Köşeleri biraz daha yumuşattık */
+  border-radius: 15px; 
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  /* YENİ: Hafif bir kenarlık ekledik */
+  
   border: 1px solid rgba(0, 0, 0, 0.1); 
 }
 

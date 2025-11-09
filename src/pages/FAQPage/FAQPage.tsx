@@ -1,8 +1,7 @@
-// src/pages/FAQPage.tsx
-
 import React from 'react';
 import "../../App.css";
-import './FAQPageStyles.css'; // Sayfaya özel stiller
+import './FAQPageStyles.css'; 
+import type { HelpResource } from '../../types/HelpResource';
 import { 
   FaBook, 
   FaWrench, 
@@ -10,48 +9,40 @@ import {
   FaBell, 
   FaFileInvoiceDollar} from 'react-icons/fa';
 
-interface HelpResource {
-  icon: React.ElementType; 
-  title: string;
-  description: string;
-  linkText: string;
-  linkHref: string;
-}
-
 const helpResources: HelpResource[] = [
   {
     icon: FaBook,
-    title: 'Dokümantasyon',
-    description: 'Uygulamaları kullanma ve yönetme konusunda yardım alın.',
-    linkText: 'Dokümantasyonu Görüntüle',
+    title: 'Documentation',
+    description: 'Get help with using and managing applications.',
+    linkText: 'View Documentation',
     linkHref: '/docs',
   },
   {
     icon: FaWrench,
-    title: 'Bilgi Bankası',
-    description: 'Sorun giderme makalelerini ve kılavuzları bulun.',
-    linkText: 'Bilgi Bankasına Git',
+    title: 'Knowledge Base',
+    description: 'Find troubleshooting articles and guides.',
+    linkText: 'Go to Knowledge Base',
     linkHref: '/knowledge-base',
   },
   {
     icon: FaUsers,
-    title: 'Topluluk',
-    description: 'Diğer kullanıcılardan cevaplar, destek ve ilham alın.',
-    linkText: 'Topluluğu Ziyaret Et',
+    title: 'Community',
+    description: 'Get answers, support, and inspiration from other users.',
+    linkText: 'Visit Community',
     linkHref: '/community',
   },
   {
     icon: FaBell,
-    title: 'Sistem Durumu',
-    description: 'Bulut uygulamalarımızın ve servislerimizin sağlığını kontrol edin.',
-    linkText: 'Sistem Durumunu Görüntüle',
+    title: 'System Status',
+    description: 'Check the health of our cloud applications and services.',
+    linkText: 'View System Status',
     linkHref: '/status',
   },
   {
     icon: FaFileInvoiceDollar,
-    title: 'Fatura ve Lisanslama',
-    description: 'Faturalama ve lisanslama hakkında SSS\'leri görün.',
-    linkText: 'SSS\'leri Görüntüle',
+    title: 'Billing and Licensing',
+    description: 'View FAQs about billing and licensing.',
+    linkText: 'View FAQs',
     linkHref: '/billing-faq',
   },
 ];
@@ -61,15 +52,14 @@ const FAQPage: React.FC = () => {
     <div className="faq-page-container">
       
       <header className="faq-header">
-        <h1>Size Nasıl Yardımcı Olabiliriz?</h1>
-        <p>Aradığınız yardımı aşağıdaki kaynaklarda bulabilirsiniz.</p>
+        <h1>How Can We Help You?</h1>
+        <p>You can find the help you need in the resources below.</p>
       </header>
 
       <main className="help-grid">
         {helpResources.map((resource) => (
           <div key={resource.title} className="help-card">
-            <resource.icon className="help-icon" />
-            {/* CSS'in flexbox düzenini doğru uygulaması için bu sarmalayıcı div eklendi */}
+            <resource.icon className="help-icon" /> 
             <div className="help-card-content">
               <h3>{resource.title}</h3>
               <p>{resource.description}</p>
@@ -82,11 +72,12 @@ const FAQPage: React.FC = () => {
       </main>
 
       <footer className="faq-footer">
-        <h2>Aradığınız yardımı bulamadınız mı?</h2>
-        <a href="/contact" className="contact-button">Bizimle İletişime Geçin</a>
+        <h2>Couldn't find what you're looking for?</h2>
+        <a href="/contact" className="contact-button">Contact Us</a>
       </footer>
     </div>
   );
 };
 
 export default FAQPage;
+  

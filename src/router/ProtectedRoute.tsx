@@ -1,8 +1,6 @@
 import { Navigate, Outlet, createBrowserRouter } from "react-router-dom";
-
-interface Props {
-  isAuthenticated?: boolean;
-}
+import React from "react";
+import type { Props } from "../types/Props";
 
 const ProtectedRoute: React.FC<Props> = ({ isAuthenticated = false }) => {
   if (!isAuthenticated) {

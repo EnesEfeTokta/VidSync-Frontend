@@ -1,9 +1,7 @@
-// src/components/RegisterForm.tsx
-
 import React, { useState } from 'react';
 import type { RegisterData } from '../types/RegisterData';
 import { useAuth } from '../context/AuthContext';
-// Stil dosyalarını buraya da eklemek, component'in kendi başına test edilmesini kolaylaştırır.
+
 import '../pages/RegisterPage/RegisterPageStyles.css';
 
 const RegisterForm: React.FC = () => {
@@ -34,15 +32,15 @@ const RegisterForm: React.FC = () => {
 
     try {
       await register(formData);
-      alert('Kayıt başarılı!');
-      // Formu sıfırlama
+      alert('Registration successful!');
+      
       setFormData({
         firstName: '', middleName: '', lastName: '', email: '', password: ''
       });
     } catch (err) {
       console.error('Registration error:', err);
-      // Kullanıcıya daha anlamlı bir hata mesajı gösterilebilir.
-      setError('Kayıt sırasında bir hata oluştu. Lütfen bilgilerinizi kontrol edin.');
+      
+      setError('An error occurred during registration. Please check your information.');
     } finally {
       setIsLoading(false);
     }
@@ -50,22 +48,19 @@ const RegisterForm: React.FC = () => {
 
   return (
     <>
-      {/* Hata mesajını formun üstünde, CSS'e uygun bir şekilde gösterelim */}
+      
       {error && <div className="error-message">{error}</div>}
 
       <form onSubmit={handleSubmit} className="login-form">
-        {/*
-          Formu daha düzenli göstermek için alanları gruplayabiliriz.
-          Örneğin, Ad ve Soyad yan yana olabilir. Şimdilik alt alta bırakalım.
-        */}
+        
         <div className="form-group">
           <label htmlFor="firstName">ADINIZ</label>
           <input
             id="firstName"
             name="firstName"
             type="text"
-            className="form-input" // CSS sınıfı eklendi
-            placeholder="Adınız"
+            className="form-input" 
+            placeholder="Its name"
             value={formData.firstName}
             onChange={handleChange}
             required
@@ -79,8 +74,8 @@ const RegisterForm: React.FC = () => {
             id="lastName"
             name="lastName"
             type="text"
-            className="form-input" // CSS sınıfı eklendi
-            placeholder="Soyadınız"
+            className="form-input" 
+            placeholder="Your last name"
             value={formData.lastName}
             onChange={handleChange}
             required
@@ -94,7 +89,7 @@ const RegisterForm: React.FC = () => {
             id="email"
             name="email"
             type="email"
-            className="form-input" // CSS sınıfı eklendi
+            className="form-input" 
             placeholder="ornek@mail.com"
             value={formData.email}
             onChange={handleChange}
@@ -109,7 +104,7 @@ const RegisterForm: React.FC = () => {
             id="password"
             name="password"
             type="password"
-            className="form-input" // CSS sınıfı eklendi
+            className="form-input" 
             placeholder="••••••••"
             value={formData.password}
             onChange={handleChange}
@@ -119,7 +114,7 @@ const RegisterForm: React.FC = () => {
         </div>
 
         <button type="submit" className="submit-button" disabled={isLoading}>
-          {isLoading ? 'Kaydediliyor...' : 'Hesap Oluştur'}
+          {isLoading ? 'Recording' : 'Create Account'}
         </button>
       </form>
     </>
