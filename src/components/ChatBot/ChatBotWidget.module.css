@@ -9,7 +9,7 @@
 }
 
 .chatPopup {
-  /* YENİ: Bu elemanı z-index hiyerarşisine dahil ediyoruz */
+  
   position: relative;
   z-index: 1001;
 
@@ -33,9 +33,9 @@
 }
 
 .chatToggleButton {
-  /* YENİ: Bu elemanı da z-index hiyerarşisine dahil ediyoruz */
+  
   position: relative;
-  z-index: 1002; /* Butonun her zaman en üstte kalmasını sağlar */
+  
 
   width: 60px;
   height: 60px;

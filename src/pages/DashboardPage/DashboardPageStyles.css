@@ -1,5 +1,3 @@
-/* DashboardPageStyles.css */
-
 .dashboard-page-container {
   width: 100%;
   max-width: 1200px;
@@ -8,7 +6,6 @@
   box-sizing: border-box;
 }
 
-/* --- SAYFA BAŞLIĞI VE ANA EYLEM BUTONU --- */
 .dashboard-header {
   display: flex;
   justify-content: space-between;
@@ -16,7 +13,7 @@
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--border-color);
-  flex-wrap: wrap; /* Mobil için */
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
@@ -52,7 +49,6 @@
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
-/* --- MEVCUT ODALAR BÖLÜMÜ --- */
 .dashboard-content h2 {
   font-size: 1.8rem;
   margin-bottom: 1.5rem;
@@ -95,7 +91,7 @@
   padding: 0.6rem;
   background-color: var(--bg-tertiary);
   color: var(--text-primary);
-  /* ...diğer buton stilleri... */
+  
 }
 
 .no-rooms-placeholder {
@@ -114,8 +110,6 @@
   margin-bottom: 1rem;
 }
 
-
-/* --- MODAL (POP-UP) STİLLERİ --- */
 .modal-overlay {
   position: fixed;
   top: 0;

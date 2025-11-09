@@ -1,10 +1,7 @@
-// src/components/ThemeToggleButton.tsx
-
 import React from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { FaSun, FaMoon } from 'react-icons/fa';
 
-// Buton için basit bir stil
 const buttonStyle: React.CSSProperties = {
   background: 'none',
   border: '1px solid var(--border-color)',
@@ -19,11 +16,11 @@ const buttonStyle: React.CSSProperties = {
 };
 
 const ThemeToggleButton: React.FC = () => {
-  // Özel hook'umuz ile context'ten tema ve fonksiyonu alıyoruz
+
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <button onClick={toggleTheme} style={buttonStyle} aria-label="Temayı Değiştir">
+    <button onClick={toggleTheme} style={buttonStyle} aria-label="Change Theme">
       {theme === 'light' ? <FaMoon /> : <FaSun />}
     </button>
   );

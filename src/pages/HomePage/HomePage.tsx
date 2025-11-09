@@ -1,16 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Video, Shield, MessageCircle, UserPlus, Settings, Send, Star } from "lucide-react";
-import "../../App.css"; // mevcut renk değişkenleri ve temalar için
+import "../../App.css";
 
 const HomePage: React.FC = () => {
   return (
     <div className="homepage">
-      {/* --- HERO SECTION --- */}
       <section className="hero-section" style={{ textAlign: "center", padding: "5rem 1rem" }}>
-        <h1 style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>VidSync'e Hoş Geldiniz</h1>
+        <h1 style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>Welcome to VidSync</h1>
         <p style={{ fontSize: "1.2rem", color: "var(--text-color)" }}>
-          Gerçek zamanlı video senkronizasyonu ve sohbet deneyimini bir araya getiriyoruz.
+          We bring together real-time video synchronization and chat experience.
         </p>
         <Link to="/signup">
           <button
@@ -25,14 +24,13 @@ const HomePage: React.FC = () => {
               fontSize: "1rem",
             }}
           >
-            Şimdi Kaydol
+            Sign Up Now
           </button>
         </Link>
       </section>
 
-      {/* --- FEATURES SECTION --- */}
       <section className="features-section" style={{ padding: "4rem 2rem", textAlign: "center" }}>
-        <h2 style={{ marginBottom: "2rem" }}>Temel Özellikler</h2>
+        <h2 style={{ marginBottom: "2rem" }}>Core Features</h2>
         <div
           className="features-grid"
           style={{
@@ -43,16 +41,15 @@ const HomePage: React.FC = () => {
             margin: "0 auto",
           }}
         >
-          <FeatureCard icon={<Video size={40} />} title="HD Video" desc="Kristal netliğinde video deneyimi yaşayın." />
-          <FeatureCard icon={<Shield size={40} />} title="Güvenlik" desc="Verileriniz modern güvenlik protokolleriyle korunur." />
-          <FeatureCard icon={<MessageCircle size={40} />} title="Anlık Mesajlaşma" desc="Görüşme sırasında anında iletişim kurun." />
-          <FeatureCard icon={<UserPlus size={40} />} title="Kolay Katılım" desc="Bağlantı göndererek hemen katılın." />
+          <FeatureCard icon={<Video size={40} />} title="HD Video" desc="Experience crystal-clear video quality." />
+          <FeatureCard icon={<Shield size={40} />} title="Security" desc="Your data is protected with modern security protocols." />
+          <FeatureCard icon={<MessageCircle size={40} />} title="Instant Messaging" desc="Communicate instantly during sessions." />
+          <FeatureCard icon={<UserPlus size={40} />} title="Easy Join" desc="Join instantly by sharing the link." />
         </div>
       </section>
 
-      {/* --- HOW IT WORKS SECTION --- */}
       <section className="how-it-works" style={{ padding: "4rem 2rem", backgroundColor: "var(--header-footer-bg)" }}>
-        <h2 style={{ textAlign: "center", marginBottom: "2rem" }}>Nasıl Çalışır?</h2>
+        <h2 style={{ textAlign: "center", marginBottom: "2rem" }}>How It Works</h2>
         <div
           className="steps"
           style={{
@@ -63,15 +60,14 @@ const HomePage: React.FC = () => {
             textAlign: "center",
           }}
         >
-          <StepCard icon={<UserPlus size={40} />} title="Hesap Oluştur" desc="VidSync hesabınızı birkaç saniyede oluşturun." />
-          <StepCard icon={<Settings size={40} />} title="Oda Ayarlarını Yap" desc="Kameranızı, mikrofonunuzu ve odanızı ayarlayın." />
-          <StepCard icon={<Send size={40} />} title="Davet Gönder" desc="Bağlantıyı arkadaşlarınızla paylaşın ve başlayın!" />
+          <StepCard icon={<UserPlus size={40} />} title="Create Account" desc="Set up your VidSync account in seconds." />
+          <StepCard icon={<Settings size={40} />} title="Configure Room" desc="Set up your camera, microphone, and room settings." />
+          <StepCard icon={<Send size={40} />} title="Send Invites" desc="Share the link with friends and get started!" />
         </div>
       </section>
 
-      {/* --- USER REVIEWS SECTION --- */}
       <section className="reviews-section" style={{ padding: "4rem 2rem", textAlign: "center" }}>
-        <h2 style={{ marginBottom: "2rem" }}>Kullanıcı Yorumları</h2>
+        <h2 style={{ marginBottom: "2rem" }}>User Reviews</h2>
         <div
           className="reviews-grid"
           style={{
@@ -82,16 +78,15 @@ const HomePage: React.FC = () => {
             margin: "0 auto",
           }}
         >
-          <ReviewCard name="Ahmet Y." text="Gerçekten harika! Görüntü kalitesi ve senkronizasyon mükemmel." />
-          <ReviewCard name="Elif K." text="Kullanımı çok kolay, arkadaşlarımla film geceleri için birebir." />
-          <ReviewCard name="Mert A." text="Güvenli ve hızlı. Koyu mod da harika görünüyor!" />
+          <ReviewCard name="Alex Y." text="Really amazing! Video quality and synchronization are perfect." />
+          <ReviewCard name="Emma K." text="Very user-friendly, perfect for movie nights with friends." />
+          <ReviewCard name="Mark A." text="Secure and fast. Dark mode looks great too!" />
         </div>
       </section>
     </div>
   );
 };
 
-// --- Yardımcı alt bileşenler ---
 const FeatureCard = ({ icon, title, desc }: any) => (
   <div
     className="feature-card"

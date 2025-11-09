@@ -1,10 +1,7 @@
 import React from 'react';
 import type { Message } from '../../types/ChatBotMessage';
 import styles from './ChatBotMessageBubble.module.css';
-
-interface MessageBubbleProps {
-  message: Message;
-}
+import type { MessageBubbleProps } from '../../types/MessageBubbleProps';
 
 const ChatBotMessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const isUser = message.sender === 'user';

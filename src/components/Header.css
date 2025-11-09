@@ -24,7 +24,7 @@
   text-decoration: none;
   transition: color 0.3s;
 }
-/* --- Mevcut stil korunuyor --- */
+
 .header {
   padding: 1rem 2rem;
   display: flex;
@@ -33,7 +33,7 @@
   background-color: var(--header-footer-bg);
   color: var(--text-color);
   transition: background-color 0.3s, color 0.3s;
-  position: relative; /* mobil menü konumu için */
+  position: relative;
   z-index: 1000;
 }
 
@@ -85,9 +85,6 @@
   margin-left: 1rem;
 }
 
-/* --- BURADAN İTİBAREN EKLEMELER --- */
-
-/* Menü butonu (hamburger) */
 .menu-toggle {
   display: none;
   background: none;
@@ -97,12 +94,10 @@
   font-size: 1.5rem;
 }
 
-/* Mobil menü kapalıyken gizli */
 .nav-mobile {
   display: none;
 }
 
-/* Mobil menü açıkken aktif */
 .nav.open {
   position: absolute;
   top: 100%;
@@ -116,7 +111,6 @@
   animation: slideDown 0.3s ease forwards;
 }
 
-/* Küçük ekran düzeni */
 @media (max-width: 768px) {
   .nav {
     display: none;
@@ -131,7 +125,6 @@
   }
 }
 
-/* Küçük bir açılma animasyonu */
 @keyframes slideDown {
   from {
     opacity: 0;

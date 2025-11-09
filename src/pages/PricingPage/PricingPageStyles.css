@@ -1,5 +1,3 @@
-/* PricingPageStyles.css - İyileştirilmiş */
-
 .pricing-page-container {
   background-color: var(--bg-primary);
   width: 100%;
@@ -33,7 +31,7 @@
 .pricing-cards-wrapper {
   display: flex;
   justify-content: center;
-  align-items: stretch; /* Kartların aynı boyda olmasını sağlar */
+  align-items: stretch; 
   gap: 2rem;
   flex-wrap: nowrap;
   width: 100%;
@@ -44,7 +42,7 @@
   background-color: var(--bg-secondary);
   border-radius: var(--border-radius-large);
   padding: 2.5rem;
-  flex: 1; /* Esnek genişlik */
+  flex: 1; 
   min-width: 300px;
   position: relative;
   border: 1px solid var(--border-color);
@@ -113,7 +111,7 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   border: none;
-  margin-top: auto; /* Butonu kartın en altına iter */
+  margin-top: auto; 
 }
 .btn-pricing:focus-visible {
   outline: 2px solid var(--primary-color);
@@ -166,16 +164,15 @@
 .feature-icon {
   color: var(--primary-color);
   margin-right: 12px;
-  flex-shrink: 0; /* İkonun küçülmesini engeller */
+  flex-shrink: 0; 
 }
 
-/* --- RESPONSIVE --- */
 @media (max-width: 992px) {
   .pricing-cards-wrapper {
     flex-wrap: wrap;
   }
   .pricing-card.popular-card {
-    order: -1; /* Popüler kartı mobil düzende en üste taşır */
+    order: -1;
     width: 100%;
   }
 }

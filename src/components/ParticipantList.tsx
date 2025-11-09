@@ -1,7 +1,5 @@
-// src/components/ParticipantList/ParticipantList.tsx
-
 import React from 'react';
-import { FaPhone } from 'react-icons/fa';// CSS dosyasını import et
+import { FaPhone } from 'react-icons/fa';
 
 interface Participant {
   id: string;
@@ -37,7 +35,7 @@ const ParticipantList: React.FC<ParticipantListProps> = ({
               className="call-button"
               onClick={() => onCallUser(p.id)}
               disabled={isCallActive}
-              title={isCallActive ? "Zaten bir görüşmedesiniz" : `${p.firstName} kişisini ara`}
+              title={isCallActive ? "You're already in a meeting" : `${p.firstName} call the person`}
             >
               <FaPhone />
             </button>

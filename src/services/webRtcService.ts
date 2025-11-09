@@ -46,9 +46,9 @@ const startLocalStream = async (): Promise<MediaStream> => {
     console.error("Error accessing media devices:", error);
     if (error instanceof DOMException) {
       if (error.name === "NotAllowedError") {
-        throw new Error("Kamera veya mikrofon erişimi reddedildi.");
+        throw new Error("Camera or microphone access denied.");
       } else if (error.name === "NotFoundError") {
-        throw new Error("Kamera veya mikrofon bulunamadı.");
+        throw new Error("No camera or microphone found.");
       }
     }
     throw error;

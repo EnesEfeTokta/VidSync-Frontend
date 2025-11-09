@@ -26,7 +26,6 @@ function App() {
 
         <main style={{ flex: 1 }}>
           <Routes>
-            {/* Herkese Açık Rotalar */}
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/pricing" element={<Pricing />} />
@@ -35,9 +34,6 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             
-            {/* Chatbot rotasını buradan kaldırdık */}
-
-            {/* --- GELİŞTİRME AMACIYLA GEÇİCİ DEĞİŞİKLİK --- */}
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/rooms/:roomId" element={<RoomPage />} />
             
@@ -46,8 +42,7 @@ function App() {
 
         <Footer />
 
-        {/* GEZGİN CHATBOT BİLEŞENİNİ BURAYA YERLEŞTİRİYORUZ */}
-        <ChatWidget /> {/* <-- 2. YENİ EKLENEN SATIR */}
+        <ChatWidget />
       </div>
     </ThemeProvider>
   );

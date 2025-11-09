@@ -1,5 +1,3 @@
-/* AboutPageStyles.css - İyileştirilmiş */
-
 .about-page-container {
   background-color: var(--bg-primary);
   width: 100%;
@@ -19,12 +17,11 @@
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 1.5rem;
-  /* Degrade metin, temaya göre ayarlandı */
   background: linear-gradient(90deg, var(--text-primary), var(--text-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text; /* Standart özellik */
-  text-fill-color: transparent; /* Standart özellik */
+  background-clip: text; 
+  text-fill-color: transparent; 
 }
 
 .hero-subtitle {
@@ -72,7 +69,7 @@
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
   line-height: 1;
-  color: var(--primary-color); /* İkon rengi ana renkle uyumlu hale getirildi */
+  color: var(--primary-color); 
 }
 
 .value-card h3 {
@@ -87,7 +84,6 @@
   line-height: 1.6;
 }
 
-/* --- RESPONSIVE --- */
 @media (max-width: 768px) {
     .about-hero h1 {
         font-size: 2.5rem;

@@ -5,13 +5,12 @@ module.exports = {
   optimization: {
     minimize: true,
     minimizer: [new TerserPlugin({
-      // Ek ayarlar buraya
       terserOptions: {
         compress: {
-          drop_console: false, // Konsol loglarını kaldırmak için
+          drop_console: false,
         },
       },
-      extractComments: false,  // Lisans yorumlarını ayırma
+      extractComments: false,
     })],
   },
 };
